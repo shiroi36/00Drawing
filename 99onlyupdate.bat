@@ -1,7 +1,7 @@
 
 @ECHO O
 rem githubのDrawingとつながっているフォルダです。
-set path2=%userprofile%\Documents\git\00Drawings\
+set path2=%userprofile%\Documents\git\\00InitialDrawing
 rem path2に新たに作成するフォルダ名です。
 set dname=00initial
 
@@ -34,14 +34,9 @@ ECHO +----[%INPUT_STR%]----+
 
 @ECHO ON
 
-mkdir %path2%%dname%
-copy *.dwg %path2%%dname%\
-copy *.lsp %path2%%dname%\
-copy *.scr %path2%%dname%\
-copy *.dsd %path2%%dname%\
-copy *.bat %path2%%dname%\
-
 cd %path2%
+git init
+git remote add origin git@github.com:shiroi36/00Drawing.git
 git add .
 git commit -m %INPUT_STR%
 git push origin master
