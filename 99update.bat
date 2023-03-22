@@ -1,7 +1,7 @@
 
 @ECHO O
 rem githubのDrawingとつながっているフォルダです。
-set path2=C:\Users\keita\Documents\Drawing\
+set path2=%userprofile%\Documents\git\00Drawings\
 rem path2に新たに作成するフォルダ名です。
 set dname=00initial
 
