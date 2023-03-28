@@ -47,8 +47,8 @@ copy *.lsp %path2%%dname%\
 copy *.scr %path2%%dname%\
 copy *.dsd %path2%%dname%\
 copy *.bat %path2%%dname%\
-xcopy 99_PDF\*.pdf %path2%%dname%\99_PDF\
-xcopy 99_PDF\*.bat %path2%%dname%\99_PDF\
+xcopy /Y 99_PDF\*.pdf %path2%%dname%\99_PDF\
+xcopy /Y 99_PDF\*.bat %path2%%dname%\99_PDF\
 
 cd %path2%
 git add .
