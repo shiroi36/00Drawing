@@ -37,7 +37,8 @@ ECHO +----[%INPUT_STR%]----+
 
 
 cd %path2%
-git pull origin master
+git fetch origin master
+git reset --hard origin/master
 cd %path1%
 
 
