@@ -1,0 +1,14 @@
+rem 比較元のPDF
+set pdf1=02_2023年3月23日構造資料.pdf
+set pdf1
+
+rem 比較先のPDFだが、たぶんこのコマンドで最新のPDFを取得するはず。
+rem https://halyui.hatenablog.com/entry/2020/12/16/151512
+for /f "delims=" %%i in ('dir /b /od *.pdf') do set fname=%%i
+rem set fname=新三芳案件
+set fname
+
+rem この２つでPDFDIFFをかけるそうするとDiff.pdfというファイルができる。
+rem https://www.kageori.com/2022/10/pdfdiff-pdf.html
+diff-pdf --output-diff=diff.pdf %fname% %pdf1%
+pause
