@@ -15,6 +15,29 @@
 
 ;これをon_startに書き込めば、たぶん関数呼び出しができる。
 
+(defun c:zumendwgtest ()
+
+; 枠の外部参照をバインド
+(command "-layer" "u" "*" "" )
+
+; 枠の外部参照をバインド
+(command "-xref" "b" "99_枠"  )
+
+;ブロックを分解
+(command "explode" "pro" "ty" "insert" ""  )
+
+; フィールドのソリッドを削除 (レイヤーで識別)
+(command "erase" "pro" "la" "Defpoints" "" ""   )
+(command "erase" "pro" "la" "99_レイアウト枠" "" ""   )
+(command "erase" "pro" "la" "*adsk_constraints" "" ""   )
+
+
+;(command  "close" "n" )
+
+(princ))
+
+;これをon_startに書き込めば、たぶん関数呼び出しができる。
+
 (defun c:zumendwg ()
 
 ; 枠の外部参照をバインド
@@ -26,15 +49,10 @@
 ;ブロックを分解
 (command "explode" "pro" "ty" "insert" ""  )
 
-;(command *cancel*  )
-; textをmtextに変換一度に大量に実行するとstackoverflowとなる。
-;(command "t1mj" "_all" *cancel*  )
-
-;マルチテキストを分解※枠で一部textコマンドを使用している部分は、変換されない
-(command "explode" "pro" "ty" "mtext" "" )
-
-; フィールドのソリッドを削除 (色で識別)
-(command "erase" "pro" "c" "rgb:192,192,192" "" ""  )
+; フィールドのソリッドを削除 (レイヤーで識別)
+(command "erase" "pro" "la" "Defpoints" "" ""   )
+(command "erase" "pro" "la" "99_レイアウト枠" "" ""   )
+(command "erase" "pro" "la" "*adsk_constraints" "" ""   )
 
 
 (foreach n (layoutlist)
