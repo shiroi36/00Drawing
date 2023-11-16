@@ -24,13 +24,18 @@
 (command "-xref" "b" "99_枠"  )
 
 ;ブロックを分解
-(command "explode" "pro" "ty" "insert" ""  )
+;(command "explode" "pro" "ty" "insert" ""  )
 
 ; フィールドのソリッドを削除 (レイヤーで識別)
 (command "erase" "pro" "la" "Defpoints" "" ""   )
 (command "erase" "pro" "la" "99_レイアウト枠" "" ""   )
 (command "erase" "pro" "la" "*adsk_constraints" "" ""   )
 
+;マルチテキストを分解※枠で一部textコマンドを使用している部分は、変換されない
+(command "explode" "pro" "ty" "mtext" "" )
+
+; フィールドのソリッドを削除 (色で識別)
+(command "erase" "pro" "c" "rgb:192,192,192" "" ""  )
 
 ;(command  "close" "n" )
 
@@ -47,12 +52,18 @@
 (command "-xref" "b" "99_枠"  )
 
 ;ブロックを分解
-(command "explode" "pro" "ty" "insert" ""  )
+;(command "explode" "pro" "ty" "insert" ""  )
 
 ; フィールドのソリッドを削除 (レイヤーで識別)
 (command "erase" "pro" "la" "Defpoints" "" ""   )
 (command "erase" "pro" "la" "99_レイアウト枠" "" ""   )
 (command "erase" "pro" "la" "*adsk_constraints" "" ""   )
+
+;マルチテキストを分解※枠で一部textコマンドを使用している部分は、変換されない
+(command "explode" "pro" "ty" "mtext" "" )
+
+; フィールドのソリッドを削除 (色で識別)
+(command "erase" "pro" "c" "rgb:192,192,192" "" ""  )
 
 
 (foreach n (layoutlist)
