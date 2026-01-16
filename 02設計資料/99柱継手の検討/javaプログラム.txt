@@ -1,0 +1,281 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package calc23.hanyu;
+
+import calc21.hirooka.*;
+import calc19.hirooka.*;
+import gpl.HighTensionBolt;
+import util.Util;
+import util.structure.mat.AS_Steel;
+import util.structure.sec.HSection;
+import util.structure.steel.BoltedConnection;
+import util.structure.steel.HighStrengthBolt;
+
+/**
+ *
+ * @author keita
+ */
+public class calcCjoint {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        calcCjoint ccj=new calcCjoint();
+        ccj.calcC1series();
+        ccj.calcC2series();
+        
+    }
+    
+    
+    public void calcC1series(){
+    
+        Util u=new Util();
+        HSection col=new HSection(594,302,14,23,13);
+        AS_Steel mat=AS_Steel.SS400;
+        String name="ケース2：C1X,C1Yの検討";
+        //内法高さ
+        double h=6590;
+        double hj=800;
+        //Ds値の結果をみて考えました
+        double N=500000;
+        //Ds値の結果をみて考えました
+        double Q=189000;
+        double y=0.5;
+        double alpha=1.2;
+        HighStrengthBolt bolt=HighStrengthBolt.F10T_M22;
+        double mu=0.45;
+        double qby=bolt.getPretension()*mu*2;
+        BoltedConnection webc=new BoltedConnection(7,1,60,60,12,bolt);
+        
+        double tup=16;
+        double tdo=16;
+        //nfy: フランジのY本数
+        double nfy=6;
+        //nfx　フランジのボルトX本数
+        double nfx=2;
+        double tbf=110;//内板の幅
+        
+        
+        double cML=col.getZpx()*mat.getYieldStress();
+        double Mj=Math.max(alpha*(1-hj/y/h)*cML, 
+                0.5*col.getZex()*mat.getYieldStress());
+        
+        System.out.println("○柱継手【"+name+"】の検討");
+        System.out.println("i)基本事項");
+        System.out.println("　　N = " + u.Round_Up(N/1000, 4)+"kN,"
+                + " Qjw = " + u.Round_Up(Q/1000, 4)+"kN, "
+                        + "cML = " + u.Round_Up(cML/1000000, 4)+"kN");
+        System.out.println("　　hj = " + hj+"mm, h = " + h+"mm, y = " + y+", α = " + alpha);
+        System.out.println("　　"+bolt.print()[1]+"：qby = " + u.Round_Up(qby/1000, 4)+"kN(フランジウェブ共通)");
+        
+        
+        System.out.println("△柱材の情報");
+        String[] colc=col.printsimple();
+        for (int i = 0; i < colc.length; i++) {
+            String colc0 = colc[i];
+            System.out.println(colc0);
+        }
+        System.out.println("　　柱材種："+mat.getName());
+        System.out.println("　　Mj = " + u.Round_Up(Mj/1000000, 3)+"kNm");
+        
+        
+        double nw=webc.getAxialBoltNumber()*webc.getVerticalBoltNumber();
+        double Zwebc=webc.getZ()*2;
+        double Awebc=webc.getA()*2;
+        System.out.println("△ウェブボルト接合部の情報");
+        System.out.println("　　2-PL"+webc.getThickness()+"("
+                + mat.getName()+", "+webc.getAxialBoltNumber()+"×"+webc.getVerticalBoltNumber()
+                +"p="+webc.getPitch_x()+"mm, "+"g="+webc.getPitch_y()+"mm)");
+        System.out.println("　　nw = " + nw+"本");
+        System.out.println("　　Zw = " + u.Round(Zwebc/1000, 3)+"cm^3");
+        System.out.println("　　Aw = " + u.Round(Awebc/100, 3)+"cm^2");
+        
+        double Asn=(col.getH()-bolt.getBolthole()*2)*tup
+                +tbf*tdo*2;//添え板の断面積
+        double nf=nfy*nfx;
+        System.out.println("△フランジ接合部の情報");
+        System.out.println("　　外板:PL-"+tup+", 内板：PL-"+tdo+", どちらも"+mat.getName());
+        System.out.println("　　Asn = " + u.Round(Asn/100, 3)+"cm^2");
+        System.out.println("　　ボルト："+nfy+"×"+nfx + "(nf="+nf+"本)");
+        
+        
+        double dc=col.getH()-col.getFlangeThickness();
+        double Iw=col.getWebThickness()
+                *Math.pow(col.getH()-2*col.getWebThickness(),3)/12.0;
+        double Mjf=(1-0.4*Iw/col.getIx())*Mj;
+        double Mjw=(0.4*Iw/col.getIx())*Mj;
+        double Njf=(1-col.getAw()/col.getA())*N;
+        double Njw=(col.getAw()/col.getA())*N;
+        
+        System.out.println("ii)フランジおよびウェブの各応力");
+        System.out.println("　　Mjf = " + u.Round_Up(Mjf/1000000, 4)+"kNm");
+        System.out.println("　　Njf = " + u.Round_Up(Njf/1000, 4)+"kN");
+        System.out.println("　　Mjw = " + u.Round_Up(Mjw/1000000, 4)+"kNm");
+        System.out.println("　　Njw = " + u.Round_Up(Njw/1000, 4)+"kN");
+        
+        
+        double jMfy=Math.min(Asn*mat.getYieldStress()*dc, nf*qby*dc);
+        double jNfy=Math.min(2*Asn*mat.getYieldStress(), 2*nf*qby);
+        double kentei1=Mjf/jMfy+Njf/jNfy;
+        System.out.println("iii)フランジボルト接合部および添板の検定");
+        System.out.println("　　jMfy = " + u.Round_Up(jMfy/1000000, 4)+"kNm");
+        System.out.println("　　jNfy = " + u.Round_Up(jNfy/1000, 4)+"kN");
+        System.out.println("　　接合部設計指針(3.23)式の検定：Mjf/jMfy+Njf/jNfy = " + u.Judge(kentei1));
+        
+        
+        double ym=webc.getYm();
+        double xm=webc.getXm();
+        double sig_ri=webc.getSig_ri();
+        double qb0=Math.sqrt(Math.pow(Njw/nw+Mjw*ym/sig_ri, 2)
+                +Math.pow(Q/nw+Mjw*xm/sig_ri, 2));
+        double kentei2=qb0/qby;
+        System.out.println("ⅳ)ウェブボルト接合部の検定");
+        System.out.println("　　ym = " + ym+"mm");
+        System.out.println("　　xm = " +xm+"mm");
+        System.out.println("　　Σri^2 = " +sig_ri+"mm");
+        System.out.println("　　接合部設計指針(3.27)式の検定 = " + u.Judge(kentei2));
+        
+        
+        double jMsy=Zwebc*mat.getYieldStress();
+        double jNsy=Awebc*mat.getYieldStress();
+        double kentei3=Mjw/jMsy+Njw/jNsy;
+        double kentei4=Q/Awebc/mat.getYieldStress()*1.5*Math.sqrt(3);
+        System.out.println("ⅴ)ウェブ添板の検定");
+        System.out.println("　　jMsy = " + u.Round_Up(jMsy/1000000, 4)+"kNm");
+        System.out.println("　　jNsy = " + u.Round_Up(jNsy/1000, 4)+"kN");
+        System.out.println("　　接合部設計指針(3.28)式の検定：Mjw/jMsy+Njw/jNsy = " + u.Judge(kentei3));
+        System.out.println("　　接合部設計指針(3.29)式の検定：Qjw(1.5√3)/(Asn・Fsy) = " + u.Judge(kentei4));
+        
+        
+    }
+
+    
+    public void calcC2series(){
+    
+        Util u=new Util();
+        HSection col=new HSection(390,300,10,16,13);
+        AS_Steel mat=AS_Steel.SS400;
+        String name="ケース1：C2X,C2XB,C2Y,C3Yの検討";
+        //内法高さ
+        double h=6590;
+        double hj=800;
+        //Ds値の結果をみて考えました
+        double N=2200000;
+        //Ds値の結果をみて考えました
+        double Q=col.getZpx()*mat.getYieldStress()*2/h;
+        double y=0.5;
+        double alpha=1.2;
+        HighStrengthBolt bolt=HighStrengthBolt.F10T_M22;
+        double mu=0.45;
+        double qby=bolt.getPretension()*mu*2;
+        BoltedConnection webc=new BoltedConnection(4,2,60,60,12,bolt);
+        
+        double tup=16;
+        double tdo=16;
+        //nfy: フランジのY本数
+        double nfy=6;
+        //nfx　フランジのボルトX本数
+        double nfx=2;
+        double tbf=110;//内板の幅
+        
+        
+        
+        double cML=col.getZex()*mat.getYieldStress();
+        double Mj=Math.max(alpha*(1-hj/y/h)*cML, 
+                0.5*col.getZex()*mat.getYieldStress());
+        
+        System.out.println("○柱継手【"+name+"】の検討");
+        System.out.println("i)基本事項");
+        System.out.println("　　N = " + u.Round_Up(N/1000, 4)+"kN,"
+                + " Qjw = " + u.Round_Up(Q/1000, 4)+"kN, "
+                        + "cML = " + u.Round_Up(cML/1000000, 4)+"kN");
+        System.out.println("　　hj = " + hj+"mm, h = " + h+"mm, y = " + y+", α = " + alpha);
+        System.out.println("　　"+bolt.print()[1]+"：qby = " + u.Round_Up(qby/1000, 4)+"kN(フランジウェブ共通)");
+        
+        
+        System.out.println("△柱材の情報");
+        String[] colc=col.printsimple();
+        for (int i = 0; i < colc.length; i++) {
+            String colc0 = colc[i];
+            System.out.println(colc0);
+        }
+        System.out.println("　　柱材種："+mat.getName());
+        System.out.println("　　Mj = " + u.Round_Up(Mj/1000000, 3)+"kNm");
+        
+        
+        double nw=webc.getAxialBoltNumber()*webc.getVerticalBoltNumber();
+        double Zwebc=webc.getZ()*2;
+        double Awebc=webc.getA()*2;
+        System.out.println("△ウェブボルト接合部の情報");
+        System.out.println("　　2-PL"+webc.getThickness()+"("
+                + mat.getName()+", "+webc.getAxialBoltNumber()+"×"+webc.getVerticalBoltNumber()
+                +"p="+webc.getPitch_x()+"mm, "+"g="+webc.getPitch_y()+"mm)");
+        System.out.println("　　nw = " + nw+"本");
+        System.out.println("　　Zw = " + u.Round(Zwebc/1000, 3)+"cm^3");
+        System.out.println("　　Aw = " + u.Round(Awebc/100, 3)+"cm^2");
+        
+        double Asn=(col.getH()-bolt.getBolthole()*2)*tup
+                +tbf*tdo*2;//添え板の断面積
+        double nf=nfy*nfx;
+        System.out.println("△フランジ接合部の情報");
+        System.out.println("　　外板:PL-"+tup+", 内板：PL-"+tdo+", どちらも"+mat.getName());
+        System.out.println("　　Asn = " + u.Round(Asn/100, 3)+"cm^2");
+        System.out.println("　　ボルト："+nfy+"×"+nfx + "(nf="+nf+"本)");
+        
+        
+        double dc=col.getH()-col.getFlangeThickness();
+        double Iw=col.getWebThickness()
+                *Math.pow(col.getH()-2*col.getWebThickness(),3)/12.0;
+        double Mjf=(1-0.4*Iw/col.getIx())*Mj;
+        double Mjw=(0.4*Iw/col.getIx())*Mj;
+        double Njf=(1-col.getAw()/col.getA())*N;
+        double Njw=(col.getAw()/col.getA())*N;
+        
+        System.out.println("ii)フランジおよびウェブの各応力");
+        System.out.println("　　Mjf = " + u.Round_Up(Mjf/1000000, 4)+"kNm");
+        System.out.println("　　Njf = " + u.Round_Up(Njf/1000, 4)+"kN");
+        System.out.println("　　Mjw = " + u.Round_Up(Mjw/1000000, 4)+"kNm");
+        System.out.println("　　Njw = " + u.Round_Up(Njw/1000, 4)+"kN");
+        
+        
+        double jMfy=Math.min(Asn*mat.getYieldStress()*dc, nf*qby*dc);
+        double jNfy=Math.min(2*Asn*mat.getYieldStress(), 2*nf*qby);
+        double kentei1=Mjf/jMfy+Njf/jNfy;
+        System.out.println("iii)フランジボルト接合部および添板の検定");
+        System.out.println("　　jMfy = " + u.Round_Up(jMfy/1000000, 4)+"kNm");
+        System.out.println("　　jNfy = " + u.Round_Up(jNfy/1000, 4)+"kN");
+        System.out.println("　　接合部設計指針(3.23)式の検定：Mjf/jMfy+Njf/jNfy = " + u.Judge(kentei1));
+        
+        
+        double ym=webc.getYm();
+        double xm=webc.getXm();
+        double sig_ri=webc.getSig_ri();
+        double qb0=Math.sqrt(Math.pow(Njw/nw+Mjw*ym/sig_ri, 2)
+                +Math.pow(Q/nw+Mjw*xm/sig_ri, 2));
+        double kentei2=qb0/qby;
+        System.out.println("ⅳ)ウェブボルト接合部の検定");
+        System.out.println("　　ym = " + ym+"mm");
+        System.out.println("　　xm = " +xm+"mm");
+        System.out.println("　　Σri^2 = " +sig_ri+"mm");
+        System.out.println("　　接合部設計指針(3.27)式の検定 = " + u.Judge(kentei2));
+        
+        
+        double jMsy=Zwebc*mat.getYieldStress();
+        double jNsy=Awebc*mat.getYieldStress();
+        double kentei3=Mjw/jMsy+Njw/jNsy;
+        double kentei4=Q/Awebc/mat.getYieldStress()*1.5*Math.sqrt(3);
+        System.out.println("ⅴ)ウェブ添板の検定");
+        System.out.println("　　jMsy = " + u.Round_Up(jMsy/1000000, 4)+"kNm");
+        System.out.println("　　jNsy = " + u.Round_Up(jNsy/1000, 4)+"kN");
+        System.out.println("　　接合部設計指針(3.28)式の検定：Mjw/jMsy+Njw/jNsy = " + u.Judge(kentei3));
+        System.out.println("　　接合部設計指針(3.29)式の検定：Qjw(1.5√3)/(Asn・Fsy) = " + u.Judge(kentei4));
+        
+        
+    }
+
+}
