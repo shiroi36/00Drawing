@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root>
+
+    <!-- ファイル名=%小梁計算%.xmlとすると、自動的にプログラムが読み込んで計算することとしました。 -->
+    <!--数字の入力はexp4jでの入力形式ですので、ある程度の計算式は可能です-->
+    <!--https://mvnrepository.com/artifact/net.objecthunter/exp4j/0.4.8-->
+    <!--https://salumarine.com/how-to-evaluate-mathematical-expression-string-in-java/-->
+
+    <!--ここから屋根鉄骨梁・間柱・耐風梁の計算設定-->
+    <calcs>
+
+
+        <calc>
+
+            <beam sec="rc-250x75x25x4.5" l="7500" mat="ss400forshort">
+                荷重入力のサンプルファイル
+            </beam>
+            <isfbdegration>false</isfbdegration>
+            <axialforce>30000</axialforce>
+
+            <pointload isstrong="true" pl="3500"      p="2.5*1.9*1000"        >nizuri</pointload>
+            <taper     isstrong="true" sl="0"        tl="0"  wl="7650" w="0.6">nizuri</taper>
+            <interval  isstrong="true" w="3.1*4.0" bnum="2"                   >1fwind</interval>
+            <uniform   isstrong="true" w="4.0"                                >nizuri</uniform>
+
+            <gusset gsec="none" gmat="ss400forshort" glg="2700">h250t12f10tm20</gusset>
+
+        </calc>
+
+
+
+        <calc>
+
+            <beam sec="rc-250x75x25x4.5" l="9999" mat="ss400forshort">
+                1本吊りのサンプル L=9999mm 支配幅4.44m
+            </beam>
+            <isfbdegration>false</isfbdegration>
+            <axialforce>0</axialforce>
+
+            <uniform   isstrong="false" w="4.44"                                    >wall</uniform>
+            <pointload isstrong="false" pl="9999*1/2" p="-1.25*9999/2000*4.44*1000" >wall</pointload>
+  
+            <gusset gsec="none" gmat="ss400forshort" glg="2700">h250t12f10tm20</gusset>
+
+        </calc>
+
+
+
+        <calc>
+
+            <beam sec="rc-250x75x25x4.5" l="9999" mat="ss400forshort">
+                2本吊りのサンプル L=9999mm 支配幅4.44m
+            </beam>
+            <isfbdegration>false</isfbdegration>
+            <axialforce>0</axialforce>
+
+            <uniform   isstrong="false" w="4.44"                                     >wall</uniform>
+            <pointload isstrong="false" pl="9999*1/3" p="-1.0995*9999/3000*4.44*1000">wall</pointload>
+            <pointload isstrong="false" pl="9999*2/3" p="-1.0995*9999/3000*4.44*1000">wall</pointload>
+
+            <gusset gsec="none" gmat="ss400forshort" glg="2700">h250t12f10tm20</gusset>
+
+        </calc>
+
+
+
+        
+
+        <calc>
+
+            <beam sec="rc-250x75x25x4.5" l="9999" mat="ss400forshort">
+                3本吊りのサンプル L=9999mm 支配幅4.4m
+            </beam>
+            <isfbdegration>false</isfbdegration>
+            <axialforce>0</axialforce>
+
+            <uniform   isstrong="false" w="4.4"                                       >wall</uniform>
+            <pointload isstrong="false" pl="9999*1/4" p="-1.14285*9999/4000*4.4*1000" >wall</pointload>
+            <pointload isstrong="false" pl="9999*2/4" p="-0.92858*9999/4000*4.4*1000" >wall</pointload>
+           <pointload isstrong="false" pl="9999*3/4" p="-1.14285*9999/4000*4.4*1000" >wall</pointload>
+
+            <gusset gsec="none" gmat="ss400forshort" glg="2700">h250t12f10tm20</gusset>
+
+        </calc>
+    </calcs>
+
+    <!--各計算時の荷重の設定情報です。-->
+    <!-- このタグは<uniform><interval><pointload><taper>のtextcontentを参照する関係となります。
+    指定する荷重値は固定とか積載とかではなく、単なる荷重値となります。 -->
+    <loads>
+
+        <!--駐車場の小梁
+        kN/m2-->
+        <!-- valueには床荷重kN/m2を入力してください。 -->
+        <load value="1.6" name="屋根小梁">roof</load>
+        <load value="0.8" name="壁荷重">wall</load>
+        <load value="2.5" name="荷摺り荷重">nizuri</load>
+        <load value="0.8" name="屋根大梁">yanekohari</load>
+        <load value="1.3" name="1F風荷重">1fwind</load>
+        <load value="1.5" name="2F風荷重">2fwind</load>
+        <load value="1.3+2.95+0.4+2.75" name="店舗小梁">storebeam</load>
+
+        <!--以下はXML入力上必要な荷重設定です。-->
+        <load value="1.0" name="単位荷重">unit</load><!--全て倍率を一倍-->
+
+    </loads>
+
+    <!--材料の設定情報です。材料の設定を切り替えることにより、長短期の検討を分けます-->
+    <materials>
+        <!--材料だけど2通りしかないのでとりあえず以下のみでOKかな-->
+        <!-- SS400で長期の検討をしたい場合 -->
+        <material>ss400forsustained</material>
+        <!-- ss400で短期の検討をしたい場合 -->
+        <material>ss400forshort</material>
+        <!-- SM490で長期の検討をしたい場合 -->
+        <material>sm490forsustained</material>
+        <!-- SM490で短期の検討をしたい場合 -->
+        <material>sm490forshort</material>
+    </materials>
+
+    <bolts>
+        <!--材料だけど2通りしかないのでとりあえず以下のみでOKかな-->
+        <bolt type="f8t" d="16">f8tm16</bolt>
+        <bolt type="f8t" d="20">f8tm20</bolt>
+        <bolt type="f8t" d="22">f8tm22</bolt>
+        <bolt type="f8t" d="24">f8tm24</bolt>
+        <bolt type="f10t" d="16">f10tm16</bolt>
+        <bolt type="f10t" d="20">f10tm20</bolt>
+        <bolt type="f10t" d="22">f10tm22</bolt>
+        <bolt type="f10t" d="24">f10tm24</bolt>
+        <bolt type="shtb" d="16">shtbm16</bolt>
+        <bolt type="shtb" d="20">shtbm20</bolt>
+        <bolt type="shtb" d="22">shtbm22</bolt>
+        <bolt type="shtb" d="24">shtbm24</bolt>
+        <bolt type="12g" d="16">12gm16</bolt>
+        <bolt type="12g" d="20">12gm20</bolt>
+        <bolt type="12g" d="22">12gm22</bolt>
+        <bolt type="12g" d="24">12gm24</bolt>
+    </bolts>
+    
+
+    <gussets>
+        <gusset m="2" n="2" p="60" t="12" bolt="f10tm20">h250t12f10tm20</gusset>
+        <gusset m="2" n="1" p="60" t="6" bolt="f10tm20">h250t6f10tm20</gusset>
+        <gusset m="2" n="1" p="60" t="9" bolt="f10tm16">h250t9f10tm16</gusset>
+        <gusset m="4" n="1" p="60" t="9" bolt="f10tm20">h400t9f10tm20</gusset>
+        <gusset m="4" n="1" p="90" t="9" bolt="f10tm20">h450t9f10tm20</gusset>
+        <gusset m="4" n="1" p="90" t="9" bolt="f10tm20">h500t9f10tm20</gusset>
+        <gusset m="6" n="1" p="60" t="12" bolt="f10tm22">h500t12f10tm22</gusset>
+        <gusset m="5" n="1" p="90" t="12" bolt="f10tm22">h600t12f10tm22</gusset>
+        <gusset m="8" n="1" p="60" t="16" bolt="f10tm22">h700t16f10tm22</gusset>
+        <gusset m="12" n="1" p="60" t="16" bolt="f10tm22">h900t16f10tm22</gusset>
+    </gussets>
+
+    <!--梁の設定情報-->
+    <sections>
+        <section size="manual" name="rc-250x75x25x4.5" fbdeg="1" A="18.92*100" Ix="1690*10000" Iy="129*10000" Zx="135*1000" Zy="23.8*1000" ib="2.62*10">rc-250x75x25x4.5</section>
+        <!-- <section size="manual" name="rc-250x75x25x4" fbdeg="1" A="16.95*100" Ix="1520*10000" Iy="118*10000" Zx="122*1000" Zy="21.8*1000" ib="2.64*10">rc-250x75x25x4</section> -->
+        <!-- <section size="manual" name="rc-250x75x20x4.5" fbdeg="1" A="18.47*100" Ix="1640*10000" Iy="117*10000" Zx="131*1000" Zy="21*1000" ib="2.52*10">rc-250x75x20x4.5</section>
+        <section size="manual" name="rc-250x75x20x4" fbdeg="1" A="16.55*100" Ix="1480*10000" Iy="107*10000" Zx="118*1000" Zy="19.3*1000" ib="2.54*10">rc-250x75x20x4</section> -->
+        <section size="manual" name="rc-200x75x25x4.5" fbdeg="1" A="16.67*100" Ix="990*10000" Iy="121*10000" Zx="99*1000" Zy="23.3*1000" ib="2.69*10">rc-200x75x25x4.5</section>
+        <!-- <section size="manual" name="rc-200x75x25x4" fbdeg="1" A="14.95*100" Ix="895*10000" Iy="110*10000" Zx="89.5*1000" Zy="21.3*1000" ib="2.72*10">rc-200x75x25x4</section> -->
+        <section size="manual" name="rc-200x75x25x3.2" fbdeg="1" A="12.13*100" Ix="736*10000" Iy="92.3*10000" Zx="73.6*1000" Zy="17.8*1000" ib="2.76*10">rc-200x75x25x3.2</section>
+        <section size="manual" name="rc-200x75x20x4.5" fbdeg="1" A="16.22*100" Ix="963*10000" Iy="109*10000" Zx="96.3*1000" Zy="20.6*1000" ib="2.6*10">rc-200x75x20x4.5</section>
+        <!-- <section size="manual" name="rc-200x75x20x4" fbdeg="1" A="14.55*100" Ix="871*10000" Iy="100*10000" Zx="87.1*1000" Zy="18.9*1000" ib="2.62*10">rc-200x75x20x4</section> -->
+        <section size="manual" name="rc-200x75x20x3.2" fbdeg="1" A="11.81*100" Ix="716*10000" Iy="84.1*10000" Zx="71.6*1000" Zy="15.8*1000" ib="2.67*10">rc-200x75x20x3.2</section>
+        <!-- <section size="manual" name="rc-175x50x20x3.2" fbdeg="1" A="9.407*100" Ix="406*10000" Iy="29.7*10000" Zx="46.4*1000" Zy="8.31*1000" ib="1.78*10">rc-175x50x20x3.2</section> -->
+        <!-- <section size="manual" name="rc-175x50x20x2.3" fbdeg="1" A="6.897*100" Ix="304*10000" Iy="23*10000" Zx="34.7*1000" Zy="6.43*1000" ib="1.82*10">rc-175x50x20x2.3</section> -->
+        <section size="manual" name="rc-150x75x25x4.5" fbdeg="1" A="14.42*100" Ix="501*10000" Iy="109*10000" Zx="66.9*1000" Zy="22.5*1000" ib="2.75*10">rc-150x75x25x4.5</section>
+        <!-- <section size="manual" name="rc-150x75x25x4" fbdeg="1" A="12.95*100" Ix="455*10000" Iy="99.8*10000" Zx="60.6*1000" Zy="20.6*1000" ib="2.78*10">rc-150x75x25x4</section> -->
+        <!-- <section size="manual" name="rc-150x75x25x3.2" fbdeg="1" A="10.53*100" Ix="375*10000" Iy="83.6*10000" Zx="50*1000" Zy="17.3*1000" ib="2.82*10">rc-150x75x25x3.2</section> -->
+        <!-- <section size="manual" name="rc-150x75x20x4.5" fbdeg="1" A="13.97*100" Ix="489*10000" Iy="99.2*10000" Zx="65.2*1000" Zy="19.8*1000" ib="2.66*10">rc-150x75x20x4.5</section> -->
+        <!-- <section size="manual" name="rc-150x75x20x4" fbdeg="1" A="12.55*100" Ix="444*10000" Iy="90.9*10000" Zx="59.2*1000" Zy="18.2*1000" ib="2.69*10">rc-150x75x20x4</section> -->
+        <section size="manual" name="rc-150x75x20x3.2" fbdeg="1" A="10.21*100" Ix="366*10000" Iy="76.4*10000" Zx="48.9*1000" Zy="15.3*1000" ib="2.74*10">rc-150x75x20x3.2</section>
+        <!-- <section size="manual" name="rc-150x75x20x2.3" fbdeg="1" A="7.472*100" Ix="273*10000" Iy="57.9*10000" Zx="36.4*1000" Zy="11.6*1000" ib="2.78*10">rc-150x75x20x2.3</section> -->
+        <!-- <section size="manual" name="rc-150x65x20x4.5" fbdeg="1" A="13.07*100" Ix="441*10000" Iy="69.2*10000" Zx="58.8*1000" Zy="15.7*1000" ib="2.3*10">rc-150x65x20x4.5</section> -->
+        <!-- <section size="manual" name="rc-150x65x20x4" fbdeg="1" A="11.75*100" Ix="401*10000" Iy="63.7*10000" Zx="53.5*1000" Zy="14.5*1000" ib="2.33*10">rc-150x65x20x4</section> -->
+        <section size="manual" name="rc-150x65x20x3.2" fbdeg="1" A="9.567*100" Ix="332*10000" Iy="53.8*10000" Zx="44.3*1000" Zy="12.2*1000" ib="2.37*10">rc-150x65x20x3.2</section>
+        <section size="manual" name="rc-150x65x20x2.3" fbdeg="1" A="7.012*100" Ix="248*10000" Iy="41.1*10000" Zx="33*1000" Zy="9.37*1000" ib="2.42*10">rc-150x65x20x2.3</section>
+        <!-- <section size="manual" name="rc-150x50x20x4.5" fbdeg="1" A="11.72*100" Ix="368*10000" Iy="35.7*10000" Zx="49*1000" Zy="10.5*1000" ib="1.75*10">rc-150x50x20x4.5</section> -->
+        <!-- <section size="manual" name="rc-150x50x20x4" fbdeg="1" A="10.55*100" Ix="337*10000" Iy="33.1*10000" Zx="44.9*1000" Zy="9.57*1000" ib="1.77*10">rc-150x50x20x4</section> -->
+        <section size="manual" name="rc-150x50x20x3.2" fbdeg="1" A="8.607*100" Ix="280*10000" Iy="28.3*10000" Zx="37.4*1000" Zy="8.19*1000" ib="1.81*10">rc-150x50x20x3.2</section>
+        <section size="manual" name="rc-150x50x20x2.3" fbdeg="1" A="6.322*100" Ix="210*10000" Iy="21.9*10000" Zx="28*1000" Zy="6.33*1000" ib="1.86*10">rc-150x50x20x2.3</section>
+        <!-- <section size="manual" name="rc-125x50x20x4.5" fbdeg="1" A="10.59*100" Ix="238*10000" Iy="33.5*10000" Zx="38*1000" Zy="10*1000" ib="1.78*10">rc-125x50x20x4.5</section> -->
+        <!-- <section size="manual" name="rc-125x50x20x4" fbdeg="1" A="9.548*100" Ix="217*10000" Iy="31.1*10000" Zx="34.7*1000" Zy="9.38*1000" ib="1.81*10">rc-125x50x20x4</section> -->
+        <section size="manual" name="rc-125x50x20x3.2" fbdeg="1" A="7.807*100" Ix="181*10000" Iy="26.6*10000" Zx="29*1000" Zy="8.02*1000" ib="1.85*10">rc-125x50x20x3.2</section>
+        <section size="manual" name="rc-125x50x20x2.3" fbdeg="1" A="5.747*100" Ix="137*10000" Iy="20.6*10000" Zx="21.9*1000" Zy="6.22*1000" ib="1.89*10">rc-125x50x20x2.3</section>
+        <!-- <section size="manual" name="rc-120x60x25x3.2" fbdeg="1" A="8.607*100" Ix="191*10000" Iy="45.2*10000" Zx="31.8*1000" Zy="12.1*1000" ib="2.29*10">rc-120x60x25x3.2</section> -->
+        <!-- <section size="manual" name="rc-120x60x25x2.3" fbdeg="1" A="6.322*100" Ix="143*10000" Iy="34.5*10000" Zx="23.9*1000" Zy="9.23*1000" ib="2.34*10">rc-120x60x25x2.3</section> -->
+        <!-- <section size="manual" name="rc-120x60x20x4.5" fbdeg="1" A="11.27*100" Ix="245*10000" Iy="52.2*10000" Zx="40.9*1000" Zy="13.4*1000" ib="2.15*10">rc-120x60x20x4.5</section> -->
+        <!-- <section size="manual" name="rc-120x60x20x4" fbdeg="1" A="10.15*100" Ix="224*10000" Iy="48.2*10000" Zx="37.3*1000" Zy="12.4*1000" ib="2.18*10">rc-120x60x20x4</section> -->
+        <section size="manual" name="rc-120x60x20x3.2" fbdeg="1" A="8.287*100" Ix="186*10000" Iy="40.9*10000" Zx="31*1000" Zy="10.5*1000" ib="2.22*10">rc-120x60x20x3.2</section>
+        <section size="manual" name="rc-120x60x20x2.3" fbdeg="1" A="6.092*100" Ix="140*10000" Iy="31.3*10000" Zx="23.3*1000" Zy="8.1*1000" ib="2.27*10">rc-120x60x20x2.3</section>
+        <section size="manual" name="rc-100x50x20x3.2" fbdeg="1" A="7.007*100" Ix="107*10000" Iy="24.5*10000" Zx="21.3*1000" Zy="7.81*1000" ib="1.87*10">rc-100x50x20x3.2</section>
+        <section size="manual" name="rc-100x50x20x2.3" fbdeg="1" A="5.172*100" Ix="80.7*10000" Iy="19*10000" Zx="16.1*1000" Zy="6.06*1000" ib="1.92*10">rc-100x50x20x2.3</section>
+        <section size="manual" name="rc-100x50x20x1.6" fbdeg="1" A="3.672*100" Ix="58.4*10000" Iy="14*10000" Zx="11.7*1000" Zy="4.47*1000" ib="1.95*10">rc-100x50x20x1.6</section>
+        <section size="manual" name="rc-75x45x15x2.3" fbdeg="1" A="4.137*100" Ix="37.1*10000" Iy="11.8*10000" Zx="9.9*1000" Zy="4.24*1000" ib="1.69*10">rc-75x45x15x2.3</section>
+        <section size="manual" name="rc-75x45x15x1.6" fbdeg="1" A="2.952*100" Ix="27.1*10000" Iy="8.71*10000" Zx="7.24*1000" Zy="3.13*1000" ib="1.72*10">rc-75x45x15x1.6</section>
+        <section size="manual" name="rc-60x30x10x2.3" fbdeg="1" A="2.872*100" Ix="15.6*10000" Iy="3.32*10000" Zx="5.2*1000" Zy="1.71*1000" ib="1.07*10">rc-60x30x10x2.3</section>
+        <section size="manual" name="rc-60x30x10x1.6" fbdeg="1" A="2.072*100" Ix="11.6*10000" Iy="2.56*10000" Zx="3.88*1000" Zy="1.32*1000" ib="1.11*10">rc-60x30x10x1.6</section>
+
+        <section size="manual" name="stkr-50x1.6" fbdeg="1" A="3.032*100" Ix="11.7*10000" Iy="11.7*10000" Zx="4.68*1000" Zy="4.68*1000" ib="1.96*10">stkr-50x1.6</section>
+        <section size="manual" name="stkr-50x2.3" fbdeg="1" A="4.252*100" Ix="15.9*10000" Iy="15.9*10000" Zx="6.34*1000" Zy="6.34*1000" ib="1.93*10">stkr-50x2.3</section>
+        <section size="manual" name="stkr-50x3.2" fbdeg="1" A="5.727*100" Ix="20.4*10000" Iy="20.4*10000" Zx="8.16*1000" Zy="8.16*1000" ib="1.89*10">stkr-50x3.2</section>
+        <section size="manual" name="stkr-50x4.5" fbdeg="1" A="7.669*100" Ix="25.5*10000" Iy="25.5*10000" Zx="10.2*1000" Zy="10.2*1000" ib="1.82*10">stkr-50x4.5</section>
+        <section size="manual" name="stkr-50x6" fbdeg="1" A="9.633*100" Ix="29.5*10000" Iy="29.5*10000" Zx="11.8*1000" Zy="11.8*1000" ib="1.75*10">stkr-50x6</section>
+        <section size="manual" name="stkr-60x1.6" fbdeg="1" A="3.672*100" Ix="20.7*10000" Iy="20.7*10000" Zx="6.89*1000" Zy="6.89*1000" ib="2.37*10">stkr-60x1.6</section>
+        <section size="manual" name="stkr-60x2.3" fbdeg="1" A="5.172*100" Ix="28.3*10000" Iy="28.3*10000" Zx="9.44*1000" Zy="9.44*1000" ib="2.34*10">stkr-60x2.3</section>
+        <section size="manual" name="stkr-60x3.2" fbdeg="1" A="7.007*100" Ix="36.9*10000" Iy="36.9*10000" Zx="12.3*1000" Zy="12.3*1000" ib="2.3*10">stkr-60x3.2</section>
+        <section size="manual" name="stkr-60x4.5" fbdeg="1" A="9.469*100" Ix="47.2*10000" Iy="47.2*10000" Zx="15.7*1000" Zy="15.7*1000" ib="2.23*10">stkr-60x4.5</section>
+        <section size="manual" name="stkr-60x6" fbdeg="1" A="12.03*100" Ix="56.1*10000" Iy="56.1*10000" Zx="18.7*1000" Zy="18.7*1000" ib="2.16*10">stkr-60x6</section>
+        <section size="manual" name="stkr-75x2.3" fbdeg="1" A="6.552*100" Ix="57.1*10000" Iy="57.1*10000" Zx="15.2*1000" Zy="15.2*1000" ib="2.95*10">stkr-75x2.3</section>
+        <section size="manual" name="stkr-75x3.2" fbdeg="1" A="8.927*100" Ix="75.5*10000" Iy="75.5*10000" Zx="20.1*1000" Zy="20.1*1000" ib="2.91*10">stkr-75x3.2</section>
+        <section size="manual" name="stkr-75x4.5" fbdeg="1" A="12.17*100" Ix="98.6*10000" Iy="98.6*10000" Zx="26.3*1000" Zy="26.3*1000" ib="2.85*10">stkr-75x4.5</section>
+        <section size="manual" name="stkr-75x6" fbdeg="1" A="15.63*100" Ix="120*10000" Iy="120*10000" Zx="32*1000" Zy="32*1000" ib="2.77*10">stkr-75x6</section>
+        <section size="manual" name="stkr-80x2.3" fbdeg="1" A="7.012*100" Ix="69.9*10000" Iy="69.9*10000" Zx="17.5*1000" Zy="17.5*1000" ib="3.16*10">stkr-80x2.3</section>
+        <section size="manual" name="stkr-80x3.2" fbdeg="1" A="9.567*100" Ix="92.7*10000" Iy="92.7*10000" Zx="23.2*1000" Zy="23.2*1000" ib="3.11*10">stkr-80x3.2</section>
+        <section size="manual" name="stkr-80x2.3" fbdeg="1" A="7.932*100" Ix="101*10000" Iy="101*10000" Zx="22.4*1000" Zy="22.4*1000" ib="3.56*10">stkr-80x2.3</section>
+        <section size="manual" name="stkr-80x3.2" fbdeg="1" A="10.85*100" Ix="135*10000" Iy="135*10000" Zx="29.9*1000" Zy="29.9*1000" ib="3.52*10">stkr-80x3.2</section>
+        <section size="manual" name="stkr-100x1.6" fbdeg="1" A="6.232*100" Ix="100*10000" Iy="100*10000" Zx="20*1000" Zy="20*1000" ib="4.01*10">stkr-100x1.6</section>
+        <section size="manual" name="stkr-100x2.3" fbdeg="1" A="8.852*100" Ix="140*10000" Iy="140*10000" Zx="27.9*1000" Zy="27.9*1000" ib="3.97*10">stkr-100x2.3</section>
+        <section size="manual" name="stkr-100x3.2" fbdeg="1" A="12.13*100" Ix="187*10000" Iy="187*10000" Zx="37.5*1000" Zy="37.5*1000" ib="3.93*10">stkr-100x3.2</section>
+        <section size="manual" name="stkr-100x4.5" fbdeg="1" A="16.67*100" Ix="249*10000" Iy="249*10000" Zx="49.9*1000" Zy="49.9*1000" ib="3.87*10">stkr-100x4.5</section>
+        <section size="manual" name="stkr-100x6" fbdeg="1" A="21.63*100" Ix="311*10000" Iy="311*10000" Zx="62.3*1000" Zy="62.3*1000" ib="3.79*10">stkr-100x6</section>
+        <section size="manual" name="stkr-100x9" fbdeg="1" A="30.67*100" Ix="408*10000" Iy="408*10000" Zx="81.6*1000" Zy="81.6*1000" ib="3.65*10">stkr-100x9</section>
+        <section size="manual" name="stkr-100x12" fbdeg="1" A="38.53*100" Ix="471*10000" Iy="471*10000" Zx="94.3*1000" Zy="94.3*1000" ib="3.5*10">stkr-100x12</section>
+        <section size="manual" name="stkr-125x2.3" fbdeg="1" A="11.15*100" Ix="278*10000" Iy="278*10000" Zx="44.5*1000" Zy="44.5*1000" ib="4.99*10">stkr-125x2.3</section>
+        <section size="manual" name="stkr-125x3.2" fbdeg="1" A="15.33*100" Ix="376*10000" Iy="376*10000" Zx="60.1*1000" Zy="60.1*1000" ib="4.95*10">stkr-125x3.2</section>
+        <section size="manual" name="stkr-125x4.5" fbdeg="1" A="21.17*100" Ix="506*10000" Iy="506*10000" Zx="80.9*1000" Zy="80.9*1000" ib="4.89*10">stkr-125x4.5</section>
+        <section size="manual" name="stkr-125x6" fbdeg="1" A="27.63*100" Ix="641*10000" Iy="641*10000" Zx="103*1000" Zy="103*1000" ib="4.82*10">stkr-125x6</section>
+        <section size="manual" name="stkr-125x9" fbdeg="1" A="39.67*100" Ix="865*10000" Iy="865*10000" Zx="138*1000" Zy="138*1000" ib="4.67*10">stkr-125x9</section>
+        <section size="manual" name="stkr-125x12" fbdeg="1" A="50.53*100" Ix="1030*10000" Iy="1030*10000" Zx="165*1000" Zy="165*1000" ib="4.52*10">stkr-125x12</section>
+        <section size="manual" name="stkr-150x3.2" fbdeg="1" A="18.53*100" Ix="661*10000" Iy="661*10000" Zx="88.1*1000" Zy="88.1*1000" ib="5.97*10">stkr-150x3.2</section>
+        <section size="manual" name="stkr-150x4.5" fbdeg="1" A="25.67*100" Ix="896*10000" Iy="896*10000" Zx="120*1000" Zy="120*1000" ib="5.91*10">stkr-150x4.5</section>
+        <section size="manual" name="stkr-150x5" fbdeg="1" A="28.36*100" Ix="982*10000" Iy="982*10000" Zx="131*1000" Zy="131*1000" ib="5.89*10">stkr-150x5</section>
+        <section size="manual" name="stkr-150x6" fbdeg="1" A="33.63*100" Ix="1150*10000" Iy="1150*10000" Zx="153*1000" Zy="153*1000" ib="5.84*10">stkr-150x6</section>
+        <section size="manual" name="stkr-150x9" fbdeg="1" A="48.67*100" Ix="1580*10000" Iy="1580*10000" Zx="210*1000" Zy="210*1000" ib="5.69*10">stkr-150x9</section>
+        <section size="manual" name="stkr-150x12" fbdeg="1" A="62.53*100" Ix="1920*10000" Iy="1920*10000" Zx="256*1000" Zy="256*1000" ib="5.54*10">stkr-150x12</section>
+        <section size="manual" name="stkr-175x4.5" fbdeg="1" A="30.17*100" Ix="1450*10000" Iy="1450*10000" Zx="166*1000" Zy="166*1000" ib="6.93*10">stkr-175x4.5</section>
+        <section size="manual" name="stkr-175x6" fbdeg="1" A="39.63*100" Ix="1860*10000" Iy="1860*10000" Zx="213*1000" Zy="213*1000" ib="6.86*10">stkr-175x6</section>
+        <section size="manual" name="stkr-175x9" fbdeg="1" A="57.67*100" Ix="2600*10000" Iy="2600*10000" Zx="297*1000" Zy="297*1000" ib="6.71*10">stkr-175x9</section>
+        <section size="manual" name="stkr-175x12" fbdeg="1" A="74.53*100" Ix="3210*10000" Iy="3210*10000" Zx="367*1000" Zy="367*1000" ib="6.57*10">stkr-175x12</section>
+
+        <section size="manual" name="stkr-60x30x1.6" fbdeg="1" A="2.712*100" Ix="12.5*10000" Iy="4.25*10000" Zx="4.16*1000" Zy="2.83*1000" ib="1.25*10">stkr-60x30x1.6</section>
+        <section size="manual" name="stkr-60x30x2.3" fbdeg="1" A="3.792*100" Ix="16.8*10000" Iy="5.65*10000" Zx="5.61*1000" Zy="3.76*1000" ib="1.22*10">stkr-60x30x2.3</section>
+        <section size="manual" name="stkr-60x30x3.2" fbdeg="1" A="5.087*100" Ix="21.4*10000" Iy="7.08*10000" Zx="7.15*1000" Zy="4.72*1000" ib="1.18*10">stkr-60x30x3.2</section>
+        <section size="manual" name="stkr-75x45x2.3" fbdeg="1" A="5.172*100" Ix="38.9*10000" Iy="17.6*10000" Zx="10.4*1000" Zy="7.82*1000" ib="1.84*10">stkr-75x45x2.3</section>
+        <section size="manual" name="stkr-75x45x3.2" fbdeg="1" A="7.007*100" Ix="50.8*10000" Iy="22.8*10000" Zx="13.5*1000" Zy="10.1*1000" ib="1.8*10">stkr-75x45x3.2</section>
+        <section size="manual" name="stkr-75x45x4.5" fbdeg="1" A="9.469*100" Ix="77.3*10000" Iy="33.9*10000" Zx="20.6*1000" Zy="15.1*1000" ib="1.68*10">stkr-75x45x4.5</section>
+        <section size="manual" name="stkr-100x50x2.3" fbdeg="1" A="6.552*100" Ix="84.8*10000" Iy="29*10000" Zx="17*1000" Zy="11.6*1000" ib="2.1*10">stkr-100x50x2.3</section>
+        <section size="manual" name="stkr-100x50x3.2" fbdeg="1" A="8.927*100" Ix="112*10000" Iy="38*10000" Zx="22.5*1000" Zy="15.2*1000" ib="2.06*10">stkr-100x50x3.2</section>
+        <section size="manual" name="stkr-100x50x4.5" fbdeg="1" A="12.17*100" Ix="147*10000" Iy="48.9*10000" Zx="29.3*1000" Zy="19.5*1000" ib="2*10">stkr-100x50x4.5</section>
+        <section size="manual" name="stkr-100x50x6" fbdeg="1" A="15.63*100" Ix="179*10000" Iy="58.7*10000" Zx="35.8*1000" Zy="23.5*1000" ib="1.94*10">stkr-100x50x6</section>
+        <section size="manual" name="stkr-125x75x1.6" fbdeg="1" A="6.232*100" Ix="137*10000" Iy="62.8*10000" Zx="21.9*1000" Zy="16.8*1000" ib="3.18*10">stkr-125x75x1.6</section>
+        <section size="manual" name="stkr-125x75x2.3" fbdeg="1" A="8.852*100" Ix="192*10000" Iy="87.5*10000" Zx="30.6*1000" Zy="23.3*1000" ib="3.14*10">stkr-125x75x2.3</section>
+        <section size="manual" name="stkr-125x75x3.2" fbdeg="1" A="12.13*100" Ix="257*10000" Iy="117*10000" Zx="41.1*1000" Zy="31.1*1000" ib="3.1*10">stkr-125x75x3.2</section>
+        <section size="manual" name="stkr-125x75x4.5" fbdeg="1" A="16.67*100" Ix="342*10000" Iy="155*10000" Zx="54.8*1000" Zy="41.2*1000" ib="3.04*10">stkr-125x75x4.5</section>
+        <section size="manual" name="stkr-125x75x6" fbdeg="1" A="21.63*100" Ix="428*10000" Iy="192*10000" Zx="68.5*1000" Zy="51.1*1000" ib="2.98*10">stkr-125x75x6</section>
+        <section size="manual" name="stkr-150x75x3.2" fbdeg="1" A="13.73*100" Ix="402*10000" Iy="137*10000" Zx="53.6*1000" Zy="36.6*1000" ib="3.16*10">stkr-150x75x3.2</section>
+        <section size="manual" name="stkr-150x75x4.5" fbdeg="1" A="18.92*100" Ix="539*10000" Iy="183*10000" Zx="71.9*1000" Zy="48.7*1000" ib="3.11*10">stkr-150x75x4.5</section>
+        <section size="manual" name="stkr-150x75x6" fbdeg="1" A="24.63*100" Ix="679*10000" Iy="228*10000" Zx="90.5*1000" Zy="60.7*1000" ib="3.04*10">stkr-150x75x6</section>
+        <section size="manual" name="stkr-150x80x4.5" fbdeg="1" A="19.37*100" Ix="563*10000" Iy="211*10000" Zx="75*1000" Zy="52.9*1000" ib="3.3*10">stkr-150x80x4.5</section>
+        <section size="manual" name="stkr-150x80x6" fbdeg="1" A="25.23*100" Ix="710*10000" Iy="264*10000" Zx="94.7*1000" Zy="66.1*1000" ib="3.24*10">stkr-150x80x6</section>
+        <section size="manual" name="stkr-150x100x2.3" fbdeg="1" A="11.15*100" Ix="361*10000" Iy="195*10000" Zx="48.2*1000" Zy="38.9*1000" ib="4.18*10">stkr-150x100x2.3</section>
+        <section size="manual" name="stkr-150x100x3.2" fbdeg="1" A="15.33*100" Ix="488*10000" Iy="262*10000" Zx="65.1*1000" Zy="52.5*1000" ib="4.14*10">stkr-150x100x3.2</section>
+        <section size="manual" name="stkr-150x100x4.5" fbdeg="1" A="21.17*100" Ix="658*10000" Iy="352*10000" Zx="87.7*1000" Zy="70.4*1000" ib="4.08*10">stkr-150x100x4.5</section>
+        <section size="manual" name="stkr-150x100x6" fbdeg="1" A="27.63*100" Ix="835*10000" Iy="444*10000" Zx="111*1000" Zy="88.8*1000" ib="4.01*10">stkr-150x100x6</section>
+        <section size="manual" name="stkr-150x100x9" fbdeg="1" A="39.67*100" Ix="1130*10000" Iy="595*10000" Zx="151*1000" Zy="119*1000" ib="3.87*10">stkr-150x100x9</section>
+        <section size="manual" name="stkr-200x100x3.2" fbdeg="1" A="18.53*100" Ix="981*10000" Iy="337*10000" Zx="98.1*1000" Zy="67.5*1000" ib="4.27*10">stkr-200x100x3.2</section>
+        <section size="manual" name="stkr-200x100x4.5" fbdeg="1" A="25.67*100" Ix="1330*10000" Iy="455*10000" Zx="133*1000" Zy="90.9*1000" ib="4.21*10">stkr-200x100x4.5</section>
+        <section size="manual" name="stkr-200x100x6" fbdeg="1" A="33.63*100" Ix="1700*10000" Iy="577*10000" Zx="170*1000" Zy="115*1000" ib="4.14*10">stkr-200x100x6</section>
+        <section size="manual" name="stkr-200x100x9" fbdeg="1" A="48.67*100" Ix="2350*10000" Iy="782*10000" Zx="235*1000" Zy="156*1000" ib="4.1*10">stkr-200x100x9</section>
+        <section size="manual" name="stkr-200x100x12" fbdeg="1" A="62.53*100" Ix="2860*10000" Iy="939*10000" Zx="286*1000" Zy="188*1000" ib="3.87*10">stkr-200x100x12</section>
+        <section size="manual" name="stkr-200x150x4.5" fbdeg="1" A="30.17*100" Ix="1760*10000" Iy="1130*10000" Zx="176*1000" Zy="151*1000" ib="6.13*10">stkr-200x150x4.5</section>
+        <section size="manual" name="stkr-200x150x6" fbdeg="1" A="39.63*100" Ix="2270*10000" Iy="1460*10000" Zx="227*1000" Zy="194*1000" ib="6.06*10">stkr-200x150x6</section>
+        <section size="manual" name="stkr-200x150x9" fbdeg="1" A="57.67*100" Ix="3170*10000" Iy="2020*10000" Zx="317*1000" Zy="270*1000" ib="5.93*10">stkr-200x150x9</section>
+        <section size="manual" name="stkr-200x150x12" fbdeg="1" A="74.53*100" Ix="3920*10000" Iy="2500*10000" Zx="392*1000" Zy="333*1000" ib="5.79*10">stkr-200x150x12</section>
+
+        <!--以下のようにエックスX：X-Ray
+        で区切って断面入力します。一応h-のprefixをつけました-->
+        <!--細幅シリーズなのでprifixにnつけました-->
+        <!-- <section size="h-198x99x4.5x7x8">n19</section> -->
+        
+    </sections>
+
+</root>

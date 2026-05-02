@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root>
+
+    <!-- ファイル名=%小梁計算%.xmlとすると、自動的にプログラムが読み込んで計算することとしました。 -->
+    <!--数字の入力はexp4jでの入力形式ですので、ある程度の計算式は可能です-->
+    <!--https://mvnrepository.com/artifact/net.objecthunter/exp4j/0.4.8-->
+    <!--https://salumarine.com/how-to-evaluate-mathematical-expression-string-in-java/-->
+
+    <!--ここから屋根鉄骨梁・間柱・耐風梁の計算設定-->
+    <calcs>
+
+        <calc>
+            <beam sec="L-75x6" l="7500" mat="ss400forshort">
+                荷重入力のサンプルファイル
+            </beam>
+            <isfbdegration>false</isfbdegration>
+            <axialforce>30000</axialforce>
+
+            <pointload isstrong="true" pl="3500"      p="2.5*1.9*1000"        >nizuri</pointload>
+            <taper     isstrong="true" sl="0"        tl="0"  wl="7650" w="0.6">nizuri</taper>
+            <interval  isstrong="true" w="3.1*4.0" bnum="2"                   >1fwind</interval>
+            <uniform   isstrong="true" w="4.0"                                >nizuri</uniform>
+
+            <gusset gsec="none" gmat="ss400forshort" glg="2700">h250t12f10tm20</gusset>
+        </calc>
+
+        <calc>
+            <beam sec="*L-90x75x9" l="9999" mat="ss400forshort">
+                1本吊りのサンプル L=9999mm 支配幅4.44m
+            </beam>
+            <isfbdegration>false</isfbdegration>
+            <axialforce>0</axialforce>
+
+            <uniform   isstrong="false" w="4.44"                                    >wall</uniform>
+            <pointload isstrong="false" pl="9999*1/2" p="-1.25*9999/2000*4.44*1000" >wall</pointload>
+            
+            <gusset gsec="none" gmat="ss400forshort" glg="2700">h250t12f10tm20</gusset>
+        </calc>
+
+        <calc>
+            <beam sec="*L-90x75x9" l="9999" mat="ss400forshort">
+                2本吊りのサンプル L=9999mm 支配幅4.44m
+            </beam>
+            <isfbdegration>false</isfbdegration>
+            <axialforce>0</axialforce>
+
+            <uniform   isstrong="false" w="4.44"                                     >wall</uniform>
+            <pointload isstrong="false" pl="9999*1/3" p="-1.0995*9999/3000*4.44*1000">wall</pointload>
+            <pointload isstrong="false" pl="9999*2/3" p="-1.0995*9999/3000*4.44*1000">wall</pointload>
+
+            <gusset gsec="none" gmat="ss400forshort" glg="2700">h250t12f10tm20</gusset>
+        </calc>
+
+        
+        <calc>
+            <beam sec="*L-90x75x9" l="9999" mat="ss400forshort">
+                3本吊りのサンプル L=9999mm 支配幅4.44m
+            </beam>
+            <isfbdegration>false</isfbdegration>
+            <axialforce>0</axialforce>
+
+            <uniform   isstrong="false" w="4.4"                                       >wall</uniform>
+            <pointload isstrong="false" pl="9999*1/4" p="-1.14285*9999/4000*4.4*1000" >wall</pointload>
+            <pointload isstrong="false" pl="9999*2/4" p="-0.92858*9999/4000*4.4*1000" >wall</pointload>
+            <pointload isstrong="false" pl="9999*3/4" p="-1.14285*9999/4000*4.4*1000" >wall</pointload>
+            
+            <gusset gsec="none" gmat="ss400forshort" glg="2700">h250t12f10tm20</gusset>
+        </calc>
+    </calcs>
+
+    <!--各計算時の荷重の設定情報です。-->
+    <!-- このタグは<uniform><interval><pointload><taper>のtextcontentを参照する関係となります。
+    指定する荷重値は固定とか積載とかではなく、単なる荷重値となります。 -->
+    <loads>
+
+        <!--駐車場の小梁
+        kN/m2-->
+        <!-- valueには床荷重kN/m2を入力してください。 -->
+        <load value="1.6" name="屋根小梁">roof</load>
+        <load value="0.8" name="壁荷重">wall</load>
+        <load value="2.5" name="荷摺り荷重">nizuri</load>
+        <load value="0.8" name="屋根大梁">yanekohari</load>
+        <load value="1.3" name="1F風荷重">1fwind</load>
+        <load value="1.5" name="2F風荷重">2fwind</load>
+        <load value="1.3+2.95+0.4+2.75" name="店舗小梁">storebeam</load>
+
+        <!--以下はXML入力上必要な荷重設定です。-->
+        <load value="1.0" name="単位荷重">unit</load><!--全て倍率を一倍-->
+
+    </loads>
+
+    <!--材料の設定情報です。材料の設定を切り替えることにより、長短期の検討を分けます-->
+    <materials>
+        <!--材料だけど2通りしかないのでとりあえず以下のみでOKかな-->
+        <!-- SS400で長期の検討をしたい場合 -->
+        <material>ss400forsustained</material>
+        <!-- ss400で短期の検討をしたい場合 -->
+        <material>ss400forshort</material>
+        <!-- SM490で長期の検討をしたい場合 -->
+        <material>sm490forsustained</material>
+        <!-- SM490で短期の検討をしたい場合 -->
+        <material>sm490forshort</material>
+    </materials>
+
+    <bolts>
+        <!--材料だけど2通りしかないのでとりあえず以下のみでOKかな-->
+        <bolt type="f8t" d="16">f8tm16</bolt>
+        <bolt type="f8t" d="20">f8tm20</bolt>
+        <bolt type="f8t" d="22">f8tm22</bolt>
+        <bolt type="f8t" d="24">f8tm24</bolt>
+        <bolt type="f10t" d="16">f10tm16</bolt>
+        <bolt type="f10t" d="20">f10tm20</bolt>
+        <bolt type="f10t" d="22">f10tm22</bolt>
+        <bolt type="f10t" d="24">f10tm24</bolt>
+        <bolt type="shtb" d="16">shtbm16</bolt>
+        <bolt type="shtb" d="20">shtbm20</bolt>
+        <bolt type="shtb" d="22">shtbm22</bolt>
+        <bolt type="shtb" d="24">shtbm24</bolt>
+        <bolt type="12g" d="16">12gm16</bolt>
+        <bolt type="12g" d="20">12gm20</bolt>
+        <bolt type="12g" d="22">12gm22</bolt>
+        <bolt type="12g" d="24">12gm24</bolt>
+    </bolts>
+    
+
+    <gussets>
+        <gusset m="2" n="2" p="60" t="12" bolt="f10tm20">h250t12f10tm20</gusset>
+        <gusset m="2" n="1" p="60" t="6" bolt="f10tm20">h250t6f10tm20</gusset>
+        <gusset m="2" n="1" p="60" t="9" bolt="f10tm16">h250t9f10tm16</gusset>
+        <gusset m="4" n="1" p="60" t="9" bolt="f10tm20">h400t9f10tm20</gusset>
+        <gusset m="4" n="1" p="90" t="9" bolt="f10tm20">h450t9f10tm20</gusset>
+        <gusset m="4" n="1" p="90" t="9" bolt="f10tm20">h500t9f10tm20</gusset>
+        <gusset m="6" n="1" p="60" t="12" bolt="f10tm22">h500t12f10tm22</gusset>
+        <gusset m="5" n="1" p="90" t="12" bolt="f10tm22">h600t12f10tm22</gusset>
+        <gusset m="8" n="1" p="60" t="16" bolt="f10tm22">h700t16f10tm22</gusset>
+        <gusset m="12" n="1" p="60" t="16" bolt="f10tm22">h900t16f10tm22</gusset>
+    </gussets>
+
+    <!--梁の設定情報-->
+    <sections>
+
+        <!-- 等辺山型鋼:コメントアウトは制限のあるもの。特殊な場合に復活すべき -->
+        <section size="manual" name="L-25x3" fbdeg="1" A="1.427*100" Ix="0.8*10000" Iy="0.8*10000" Zx="0.45*1000" Zy="0.45*1000" ib="0.48*10">L-25x3</section>
+        <section size="manual" name="L-30x3" fbdeg="1" A="1.727*100" Ix="1.42*10000" Iy="1.42*10000" Zx="0.66*1000" Zy="0.66*1000" ib="0.58*10">L-30x3</section>
+        <section size="manual" name="L-40x3" fbdeg="1" A="2.336*100" Ix="3.53*10000" Iy="3.53*10000" Zx="1.21*1000" Zy="1.21*1000" ib="0.79*10">L-40x3</section>
+        <section size="manual" name="L-40x5" fbdeg="1" A="3.755*100" Ix="5.42*10000" Iy="5.42*10000" Zx="1.91*1000" Zy="1.91*1000" ib="0.77*10">L-40x5</section>
+        <section size="manual" name="L-45x4" fbdeg="1" A="3.492*100" Ix="6.5*10000" Iy="6.5*10000" Zx="2*1000" Zy="2*1000" ib="0.88*10">L-45x4</section>
+        <section size="manual" name="L-50x4" fbdeg="1" A="3.892*100" Ix="9.06*10000" Iy="9.06*10000" Zx="2.49*1000" Zy="2.49*1000" ib="0.98*10">L-50x4</section>
+        <section size="manual" name="L-50x6" fbdeg="1" A="5.644*100" Ix="12.6*10000" Iy="12.6*10000" Zx="3.55*1000" Zy="3.55*1000" ib="0.96*10">L-50x6</section>
+        <section size="manual" name="L-60x5" fbdeg="1" A="5.802*100" Ix="19.6*10000" Iy="19.6*10000" Zx="4.52*1000" Zy="4.52*1000" ib="1.18*10">L-60x5</section>
+        <section size="manual" name="L-65x6" fbdeg="1" A="7.527*100" Ix="29.4*10000" Iy="29.4*10000" Zx="6.27*1000" Zy="6.27*1000" ib="1.27*10">L-65x6</section>
+        <section size="manual" name="L-65x8" fbdeg="1" A="9.761*100" Ix="36.8*10000" Iy="36.8*10000" Zx="7.97*1000" Zy="7.97*1000" ib="1.25*10">L-65x8</section>
+        <section size="manual" name="L-70x6" fbdeg="1" A="8.127*100" Ix="37.1*10000" Iy="37.1*10000" Zx="7.33*1000" Zy="7.33*1000" ib="1.37*10">L-70x6</section>
+        <section size="manual" name="L-75x6" fbdeg="1" A="8.727*100" Ix="46.1*10000" Iy="46.1*10000" Zx="8.47*1000" Zy="8.47*1000" ib="1.48*10">L-75x6</section>
+        <section size="manual" name="L-75x9" fbdeg="1" A="12.69*100" Ix="64.4*10000" Iy="64.4*10000" Zx="12.1*1000" Zy="12.1*1000" ib="1.45*10">L-75x9</section>
+        <section size="manual" name="L-75x12" fbdeg="1" A="16.56*100" Ix="81.9*10000" Iy="81.9*10000" Zx="15.7*1000" Zy="15.7*1000" ib="1.44*10">L-75x12</section>
+        <section size="manual" name="L-80x6" fbdeg="1" A="9.327*100" Ix="56.4*10000" Iy="56.4*10000" Zx="9.7*1000" Zy="9.7*1000" ib="1.58*10">L-80x6</section>
+        <section size="manual" name="L-90x6" fbdeg="1" A="10.55*100" Ix="80.7*10000" Iy="80.7*10000" Zx="12.3*1000" Zy="12.3*1000" ib="1.78*10">L-90x6</section>
+        <section size="manual" name="L-90x7" fbdeg="1" A="12.22*100" Ix="93*10000" Iy="93*10000" Zx="14.2*1000" Zy="14.2*1000" ib="1.77*10">L-90x7</section>
+        <section size="manual" name="L-90x10" fbdeg="1" A="17*100" Ix="125*10000" Iy="125*10000" Zx="19.5*1000" Zy="19.5*1000" ib="1.74*10">L-90x10</section>
+        <!-- <section size="manual" name="L-90x13" fbdeg="1" A="21.71*100" Ix="156*10000" Iy="156*10000" Zx="24.8*1000" Zy="24.8*1000" ib="1.73*10">L-90x13</section> -->
+        <section size="manual" name="L-100x7" fbdeg="1" A="13.62*100" Ix="129*10000" Iy="129*10000" Zx="17.7*1000" Zy="17.7*1000" ib="1.98*10">L-100x7</section>
+        <section size="manual" name="L-100x10" fbdeg="1" A="19*100" Ix="175*10000" Iy="175*10000" Zx="24.4*1000" Zy="24.4*1000" ib="1.95*10">L-100x10</section>
+        <section size="manual" name="L-100x13" fbdeg="1" A="24.31*100" Ix="220*10000" Iy="220*10000" Zx="31.1*1000" Zy="31.1*1000" ib="1.94*10">L-100x13</section>
+        <section size="manual" name="L-120x8" fbdeg="1" A="18.76*100" Ix="258*10000" Iy="258*10000" Zx="29.5*1000" Zy="29.5*1000" ib="2.38*10">L-120x8</section>
+        <section size="manual" name="L-130x9" fbdeg="1" A="22.74*100" Ix="366*10000" Iy="366*10000" Zx="38.7*1000" Zy="38.7*1000" ib="2.57*10">L-130x9</section>
+        <section size="manual" name="L-130x12" fbdeg="1" A="29.76*100" Ix="467*10000" Iy="467*10000" Zx="49.9*1000" Zy="49.9*1000" ib="2.54*10">L-130x12</section>
+        <section size="manual" name="L-130x15" fbdeg="1" A="36.75*100" Ix="568*10000" Iy="568*10000" Zx="61.5*1000" Zy="61.5*1000" ib="2.53*10">L-130x15</section>
+        <section size="manual" name="L-150x12" fbdeg="1" A="34.77*100" Ix="740*10000" Iy="740*10000" Zx="68.1*1000" Zy="68.1*1000" ib="2.96*10">L-150x12</section>
+        <section size="manual" name="L-150x15" fbdeg="1" A="42.74*100" Ix="888*10000" Iy="888*10000" Zx="82.6*1000" Zy="82.6*1000" ib="2.92*10">L-150x15</section>
+        <section size="manual" name="L-150x19" fbdeg="1" A="53.38*100" Ix="1090*10000" Iy="1090*10000" Zx="103*1000" Zy="103*1000" ib="2.91*10">L-150x19</section>
+        <section size="manual" name="L-175x12" fbdeg="1" A="40.52*100" Ix="1180*10000" Iy="1180*10000" Zx="91.8*1000" Zy="91.8*1000" ib="3.44*10">L-175x12</section>
+        <section size="manual" name="L-175x15" fbdeg="1" A="50.21*100" Ix="1440*10000" Iy="1440*10000" Zx="114*1000" Zy="114*1000" ib="3.42*10">L-175x15</section>
+        <section size="manual" name="L-200x15" fbdeg="1" A="57.75*100" Ix="2180*10000" Iy="2180*10000" Zx="150*1000" Zy="150*1000" ib="3.93*10">L-200x15</section>
+        <section size="manual" name="L-200x20" fbdeg="1" A="76*100" Ix="2820*10000" Iy="2820*10000" Zx="197*1000" Zy="197*1000" ib="3.9*10">L-200x20</section>
+        <section size="manual" name="L-200x25" fbdeg="1" A="93.75*100" Ix="3420*10000" Iy="3420*10000" Zx="242*1000" Zy="242*1000" ib="3.88*10">L-200x25</section>
+        <section size="manual" name="L-250x25" fbdeg="1" A="119.4*100" Ix="6950*10000" Iy="6950*10000" Zx="388*1000" Zy="388*1000" ib="4.89*10">L-250x25</section>
+        <section size="manual" name="L-250x35" fbdeg="1" A="162.6*100" Ix="9110*10000" Iy="9110*10000" Zx="519*1000" Zy="519*1000" ib="4.83*10">L-250x35</section>
+        <!-- 不等辺山型鋼:コメントアウトは制限のあるもの。特殊な場合に復活すべき -->
+        <!-- <section size="manual" name="L-90x75x9" fbdeg="1" A="14.04*100" Ix="109*10000" Iy="68.1*10000" Zx="17.4*1000" Zy="12.4*1000" ib="1.56*10">L-90x75x9</section> -->
+        <section size="manual" name="L-100x75x7" fbdeg="1" A="11.87*100" Ix="118*10000" Iy="56.9*10000" Zx="17*1000" Zy="10*1000" ib="1.61*10">L-100x75x7</section>
+        <section size="manual" name="L-100x75x10" fbdeg="1" A="16.5*100" Ix="159*10000" Iy="76.1*10000" Zx="23.3*1000" Zy="13.7*1000" ib="1.58*10">L-100x75x10</section>
+        <section size="manual" name="L-125x75x6" fbdeg="1" A="11.75*100" Ix="190*10000" Iy="52.4*10000" Zx="22.5*1000" Zy="8.89*1000" ib="1.64*10">L-125x75x6</section>
+        <section size="manual" name="L-125x75x7" fbdeg="1" A="13.62*100" Ix="219*10000" Iy="60.4*10000" Zx="26.1*1000" Zy="10.3*1000" ib="1.64*10">L-125x75x7</section>
+        <section size="manual" name="L-125x75x10" fbdeg="1" A="19*100" Ix="299*10000" Iy="80.8*10000" Zx="36.1*1000" Zy="14.1*1000" ib="1.61*10">L-125x75x10</section>
+        <!-- <section size="manual" name="L-125x75x13" fbdeg="1" A="24.31*100" Ix="376*10000" Iy="101*10000" Zx="46.1*1000" Zy="17.9*1000" ib="1.6*10">L-125x75x13</section>
+        <section size="manual" name="L-125x90x10" fbdeg="1" A="20.5*100" Ix="318*10000" Iy="138*10000" Zx="37.2*1000" Zy="20.3*1000" ib="1.93*10">L-125x90x10</section>
+        <section size="manual" name="L-125x90x13" fbdeg="1" A="26.26*100" Ix="401*10000" Iy="173*10000" Zx="47.5*1000" Zy="25.9*1000" ib="1.91*10">-125x90x13</section> -->
+        <section size="manual" name="L-150x90x9" fbdeg="1" A="20.94*100" Ix="485*10000" Iy="133*10000" Zx="48.2*1000" Zy="19*1000" ib="1.96*10">L-150x90x9</section>
+        <section size="manual" name="L-150x90x12" fbdeg="1" A="27.36*100" Ix="619*10000" Iy="167*10000" Zx="62.3*1000" Zy="24.3*1000" ib="1.93*10">L-150x90x12</section>
+
+        <!--以下のようにエックスX：X-Ray
+        で区切って断面入力します。一応h-のprefixをつけました-->
+        <!--細幅シリーズなのでprifixにnつけました-->
+        <!-- <section size="h-198x99x4.5x7x8">n19</section> -->
+    </sections>
+
+</root>

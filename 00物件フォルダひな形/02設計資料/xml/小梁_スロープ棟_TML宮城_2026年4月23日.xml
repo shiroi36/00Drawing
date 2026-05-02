@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<root>
+    
+    <!-- ファイル名=%小梁計算%.xmlとすると、自動的にプログラムが読み込んで計算することとしました。 -->
+    <!--数字の入力はexp4jでの入力形式ですので、ある程度の計算式は可能です-->
+    <!--https://mvnrepository.com/artifact/net.objecthunter/exp4j/0.4.8-->
+    <!--https://salumarine.com/how-to-evaluate-mathematical-expression-string-in-java/-->
+    
+    
+    <!--ここから梁の計算設定-->
+    <calcs>
+
+        <calc>
+            <beam sec="n34" l="7400" b="2170" mat="ss400forsustained">B34_RX1RY1_6F</beam>
+            <isfbdegration>false</isfbdegration>
+            <iscomposite>true</iscomposite>
+            <issteelfordeadload>false</issteelfordeadload>
+            <slabproperty>t130b200p300</slabproperty>
+            <deckproperty>h50t12</deckproperty>
+            <mainload>2f_slope_beam</mainload>
+            <uniform w="%b">%mainload</uniform>
+            <gusset gsec="n49" gmat="ss400forshort" glg="2200">jb34</gusset>
+        </calc>
+
+        <calc>
+            <beam sec="n34" l="6500" b="6500*0.2" mat="ss400forsustained">B34_RX1RY3_6F</beam>
+            <isfbdegration>false</isfbdegration>
+            <iscomposite>true</iscomposite>
+            <issteelfordeadload>false</issteelfordeadload>
+            <slabproperty>t130b200p300</slabproperty>
+            <deckproperty>h50t12</deckproperty>
+            <mainload>rf_slope_beam</mainload>
+            <interval w="7.4/2*6.5/3" bnum="2">%mainload</interval>
+            <uniform w="0.4">%mainload</uniform>
+            <gusset gsec="none" gmat="ss400forshort" glg="2700">jb34</gusset>
+        </calc>
+
+        <calc>
+            <beam sec="n34" l="7400" b="2170" mat="ss400forsustained">B34_RX1RY1_RF</beam>
+            <isfbdegration>false</isfbdegration>
+            <iscomposite>true</iscomposite>
+            <issteelfordeadload>false</issteelfordeadload>
+            <slabproperty>t130b200p300</slabproperty>
+            <deckproperty>h50t12</deckproperty>
+            <mainload>rf_slope_beam</mainload>
+            <uniform w="%b">%mainload</uniform>
+            <gusset gsec="none" gmat="ss400forshort" glg="2700">jb34</gusset>
+        </calc>
+
+    </calcs>
+
+    <gussets>
+    <gusset m="4" n="2" p="60" t="6" bolt="f8tm20">jb34</gusset>
+
+    <gusset m="1" n="1" p="60" t="9" bolt="f8tm16">h100t9f8tm16</gusset>
+    <gusset m="2" n="1" p="60" t="9" bolt="f10tm16">h250t9f10tm16</gusset>
+    <gusset m="4" n="1" p="60" t="9" bolt="f10tm20">h400t9f10tm20</gusset>
+    <gusset m="4" n="1" p="90" t="9" bolt="f10tm20">h450t9f10tm20</gusset>
+    <gusset m="4" n="1" p="90" t="12" bolt="f10tm22">h500t12f10tm22</gusset>
+    <gusset m="5" n="1" p="90" t="12" bolt="f10tm22">h600t12f10tm22</gusset>
+    <gusset m="8" n="1" p="60" t="16" bolt="f10tm22">h700t16f10tm22</gusset>
+    <gusset m="12" n="1" p="60" t="16" bolt="f10tm22">h900t16f10tm22</gusset>
+    </gussets>
+    
+    <!--各計算時の荷重の設定情報-->
+    <loads>
+        <load name="R階車路小梁" const="1.5" dead="24*0.105+0.15" live="2.6+0.48">rf_parking_lot_beam</load>
+        <load name="R階車路大梁" const="1.5" dead="24*0.105+0.15" live="2.2+0.48">rf_parking_lot_girder</load>
+        <load name="一般階車路小梁" const="1.5" dead="24*0.105+0.15" live="2.6">2f_parking_lot_beam</load>
+        <load name="一般階車路大梁" const="1.5" dead="24*0.105+0.15" live="2.2">2f_parking_lot_girder</load>
+        <load name="R階スロープ小梁" const="1.5" dead="24*0.105+0.15" live="2.6+0.6">rf_slope_beam</load>
+        <load name="R階スロープ大梁" const="1.5" dead="24*0.105+0.15" live="2.2+0.6">rf_slope_girder</load>
+        <load name="一般階スロープ小梁" const="1.5" dead="24*0.105+0.15" live="2.6+0.36">2f_slope_beam</load>
+        <load name="一般階スロープ大梁" const="1.5" dead="24*0.105+0.15" live="2.2+0.36">2f_slope_girder</load>
+
+        <load name="転落防止柵等" const="0.0" dead="1.0" live="0.0">wall</load>
+
+        <!--以下はXML入力上必要な荷重設定です。-->
+        <load name="単位荷重" const="1.0" dead="1.0" live="1.0">unit_all</load> <!--全て倍率を一倍-->
+        <load name="施工のみ" const="1.0" dead="0.0" live="0.0">unit_c</load> <!--施工時のみ倍率を一倍-->
+        <load name="死荷重のみ" const="0.0" dead="1.0" live="0.0">unit_d</load> <!--死荷重のみ倍率を一倍-->
+        <load name="活荷重のみ" const="0.0" dead="0.0" live="1.0">unit_l</load> <!--活荷重のみ倍率を一倍-->
+        <load name="無倍率" const="0.0" dead="0.0" live="0.0">none</load> <!--スキップする、という意味だがこれは実質使わなくていい-->
+
+
+    </loads>
+    
+    <!--梁の設定情報-->
+    <sections>
+        <!--以下のようにエックスX：X-Ray で区切って断面入力します。一応h-のprefixをつけました-->
+        <!--細幅シリーズなのでprifixにnつけました-->
+        <section size="h-198x99x4.5x7x8"  >n19</section>
+        <section size="h-200x100x5.5x8x8" >n20</section>
+        <section size="h-248x124x5x8x8"   >n24</section>
+        <section size="h-250x125x6x9x8"   >n25</section>
+        <section size="h-298x149x5.5x8x13">n29</section>
+        <section size="h-300x150x6.5x9x13">n30</section>
+        <section size="h-346x174x6x9x13"  >n34</section>
+        <section size="h-350x175x7x11x13" >n35</section>
+        <section size="h-396x199x7x11x13" >n39</section>
+        <section size="h-400x200x8x13x13" >n40</section>
+        <section size="h-446x199x8x12x13" >n44</section>
+        <section size="h-450x200x9x14x13" >n45</section>
+        <section size="h-496x199x9x14x13" >n49</section>
+        <section size="h-500x200x10x16x13">n50</section>
+        <section size="h-596x199x10x15x13">n59</section>
+        <section size="h-600x200x11x17x13">n60</section>
+        <!--中幅シリーズなのでprifixにmつけました-->
+        <section size="h-582x300x12x17x13">m582</section>
+        <section size="h-588x300x12x20x13">m588</section>
+        <section size="h-594x302x14x23x13">m594</section>
+        <section size="h-700x300x13x24x18">m700</section>
+        <!--広幅シリーズなのでprifixにwつけました-->
+    </sections>
+    
+    <!--材料の設定情報だが、あってないようなもん2023年7月21日-->
+    <materials>
+        <!--材料だけど2通りしかないのでとりあえず以下のみでOKかな-->
+        <material>ss400forsustained</material>
+        <material>sm490forsustained</material>
+    </materials>
+    
+    <!--スラブの設定情報。具体的にはコンクリートとスタッドの情報を設定します-->
+    <slabs>
+        <!--phi:スタッドのサイズ。19か22しか実装しない予定2023年7月21日-->
+        <!--l(mm):スタッドの長さ-->
+        <!--g(本)：スタッドの梁材軸直交方向の本数。ゲージみたいなの-->
+        <!--p(mm): スタッドの梁材軸方向のピッチ-->
+        <!--conc: コンクリートだが、fc21しか実装しない予定2023年7月21日-->
+        <!--t(mm): スラブ厚-->
+        <!-- 駐車場   -->
+        <slab phi="19" l="80" g="1" p="200" conc="fc21"  t="80">t130b200p200</slab>
+        <slab phi="19" l="80" g="2" p="200" conc="fc21"  t="80">t130b300p200</slab>
+        <slab phi="19" l="80" g="1" p="300" conc="fc21"  t="80">t130b200p300</slab>
+        <!-- 物流倉庫 -->
+        <slab phi="19" l="130" g="1" p="200" conc="fc21" t="180">t180b200p200</slab>
+        <slab phi="19" l="130" g="3" p="200" conc="fc21" t="180">t180b200p200</slab>
+    </slabs>
+    
+    <!--h(mm):デッキプレート高さ Hd-->
+    <!--b(mm): デッキプレートピッチ B=-->
+    <!--bup: みぞの上幅 b1=-->
+    <!--bdown: みぞの下幅 b2-->
+    <!--t(mm)：板厚-->
+    <deckplates>
+        <!--エスデッキhttps://www.itec-c.co.jp/download/scatalog.pdf-->
+        <deckplate h="50" b="300" bup="130" bdown="175" t="1.2" >h50t12</deckplate>
+        <deckplate h="75" b="300" bup="125" bdown="180" t="1.2" >h75t12</deckplate>
+        <!--フラットデッキ-->
+        <deckplate h="0" b="0" bup="0" bdown="0" t="0" >flatdeck</deckplate>
+    </deckplates>
+    
+    <bolts>
+        <!--材料だけど2通りしかないのでとりあえず以下のみでOKかな-->
+        <bolt type="f8t" d="16">f8tm16</bolt>
+        <bolt type="f8t" d="20">f8tm20</bolt>
+        <bolt type="f8t" d="22">f8tm22</bolt>
+        <bolt type="f8t" d="24">f8tm24</bolt>
+        <bolt type="f10t" d="16">f10tm16</bolt>
+        <bolt type="f10t" d="20">f10tm20</bolt>
+        <bolt type="f10t" d="22">f10tm22</bolt>
+        <bolt type="f10t" d="24">f10tm24</bolt>
+        <bolt type="shtb" d="16">shtbm16</bolt>
+        <bolt type="shtb" d="20">shtbm20</bolt>
+        <bolt type="shtb" d="22">shtbm22</bolt>
+        <bolt type="shtb" d="24">shtbm24</bolt>
+        <bolt type="12g" d="16">12gm16</bolt>
+        <bolt type="12g" d="20">12gm20</bolt>
+        <bolt type="12g" d="22">12gm22</bolt>
+        <bolt type="12g" d="24">12gm24</bolt>
+    </bolts>
+</root>

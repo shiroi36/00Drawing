@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root>
+
+    <!-- ファイル名=%小梁計算%.xmlとすると、自動的にプログラムが読み込んで計算することとしました。 -->
+    <!--数字の入力はexp4jでの入力形式ですので、ある程度の計算式は可能です-->
+    <!--https://mvnrepository.com/artifact/net.objecthunter/exp4j/0.4.8-->
+    <!--https://salumarine.com/how-to-evaluate-mathematical-expression-string-in-java/-->
+
+    <!-- 2023年7月24日羽生市倉庫計画
+    デッキはflatdeck
+    合成梁で1/500以下は以下の受領仕様書から参照しました。
+    2025年3月31日：以下の変更を行いました。
+    B792→B788に変更
+    https://github.com/shiroi36/Drawing/files/11608081/20230531.pdf -->
+
+    <!--ここから梁の計算設定-->
+    <calcs>
+
+        <calc>
+            <beam sec="n35" l="10000/2" b="10330/3" mat="sm490forsustained">B39</beam>
+            <isfbdegration>false</isfbdegration>
+            <iscomposite>true</iscomposite>
+            <issteelfordeadload>false</issteelfordeadload>
+            <slabproperty>g1t180p200</slabproperty>
+            <deckproperty>flatdeck</deckproperty>
+            <mainload>storagebeam</mainload>
+            <uniform w="%b" >%mainload</uniform>
+            <gusset gsec="bh7935" gmat="sm490forsustained" glg="2700">bj90m</gusset>
+        </calc>
+
+        <calc>
+            <beam sec="th888" l="10330" b="10000/3" mat="sm490forsustained">B888</beam>
+            <isfbdegration>false</isfbdegration>
+            <iscomposite>true</iscomposite>
+            <issteelfordeadload>false</issteelfordeadload>
+            <slabproperty>g2t180p200</slabproperty>
+            <deckproperty>flatdeck</deckproperty>
+            <mainload>storagebeam</mainload>
+            <interval w="10.33/3*10.00/2" bnum="2">%mainload</interval>
+            <gusset gsec="bh7935" gmat="sm490forsustained" glg="2700">bj90m</gusset>
+        </calc>
+
+
+        <calc>
+            <beam sec="th888" l="11000" b="10000/3" mat="sm490forsustained">B888</beam>
+            <isfbdegration>false</isfbdegration>
+            <iscomposite>true</iscomposite>
+            <issteelfordeadload>false</issteelfordeadload>
+            <slabproperty>g2t180p200</slabproperty>
+            <deckproperty>flatdeck</deckproperty>
+            <mainload>storagebeam</mainload>
+            <interval w="11.0/3*10.00/2" bnum="2">%mainload</interval>
+            <gusset gsec="bh7935" gmat="sm490forsustained" glg="2700">bj90m</gusset>
+        </calc>
+
+        <calc>
+            <beam sec="m890" l="11000" b="10000/3" mat="sm490forsustained">m890大梁</beam>
+            <isfbdegration>false</isfbdegration>
+            <iscomposite>true</iscomposite>
+            <issteelfordeadload>false</issteelfordeadload>
+            <slabproperty>g2t180p200</slabproperty>
+            <deckproperty>flatdeck</deckproperty>
+            <mainload>storagegirder</mainload>
+            <interval w="11.0/3*10.00/2" bnum="2">%mainload</interval>
+            <gusset gsec="bh7935" gmat="sm490forsustained" glg="2700">bj90m</gusset>
+        </calc>
+
+        
+        <calc>
+            <beam sec="m900" l="10330" b="10000/3" mat="ss400forsustained">m912大梁</beam>
+            <isfbdegration>false</isfbdegration>
+            <iscomposite>true</iscomposite>
+            <issteelfordeadload>false</issteelfordeadload>
+            <slabproperty>g2t180p150</slabproperty>
+            <deckproperty>flatdeck</deckproperty>
+            <mainload>storagegirder</mainload>
+            <interval w="10.3/2*10" bnum="1">%mainload</interval>
+            <gusset gsec="bh7935" gmat="sm490forsustained" glg="2700">bj90m</gusset>
+        </calc>
+        
+        
+
+
+    </calcs>
+
+    <!--各計算時の荷重の設定情報-->
+    <loads>
+        <!--羽生計画の荷重2023年7月24日 kN/m2-->
+        <load name="倉庫小梁" const="1.5" dead="0.19*24" live="12+0.50">storagebeam</load>
+        <load name="倉庫大梁" const="1.5" dead="0.19*24" live="9+0.50">storagegirder</load>
+        <load name="バース小梁" const="1.5" dead="0.18*24" live="9+0.50">berth_beam</load>
+        <load name="バース大梁" const="1.5" dead="0.18*24" live="6+0.50">berth_girder</load>
+        <load name="バース(防水)小梁" const="1.5" dead="0.18*24" live="9+4.0">waterproof_beam</load>
+        <load name="バース(防水)大梁" const="1.5" dead="0.18*24" live="6+4.0">waterproof_girder</load>
+        <load name="事務所小梁" const="1.5" dead="0.18*24" live="2.35+0.5">officebeam</load>
+        <load name="事務所大梁" const="1.5" dead="0.18*24" live="1.80+0.5">officegirder</load>
+
+        <!--階段小梁 kN/m2-->
+        <load name="階段荷重" const="1.5" dead="1.5" live="2.35">stairbeam</load>
+
+        <load name="壁荷重" const="0.0" dead="0.0" live="0.6">wall</load>
+        <load name="RC壁" const="0.0" dead="7.7" live="0.0">rc_wall</load>
+        <load name="梁保護コンh=1.0m" const="0.0" dead="24*1.0" live="0.0">wrapped_concrete</load>
+
+        <!--以下はXML入力上必要な荷重設定です。-->
+        <load name="単位荷重" const="1.0" dead="1.0" live="1.0">unit_all</load> <!--全て倍率を一倍-->
+        <load name="施工のみ" const="1.0" dead="0.0" live="0.0">unit_c</load> <!--施工時のみ倍率を一倍-->
+        <load name="死荷重のみ" const="0.0" dead="1.0" live="0.0">unit_d</load> <!--死荷重のみ倍率を一倍-->
+        <load name="活荷重のみ" const="0.0" dead="0.0" live="1.0">unit_l</load> <!--活荷重のみ倍率を一倍-->
+        <load name="無倍率" const="0.0" dead="0.0" live="0.0">none</load> <!--スキップする、という意味だがこれは実質使わなくていい-->
+    </loads>
+
+    <!--梁の設定情報-->
+    <sections>
+        <!--以下のようにエックスX：X-Ray で区切って断面入力します。一応h-のprefixをつけました-->
+        <!--細幅シリーズなのでprifixにnつけました-->
+        <section size="h-198x99x4.5x7x8">n19</section>
+        <section size="h-200x100x5.5x8x8">n20</section>
+        <section size="h-248x124x5x8x8">n24</section>
+        <section size="h-250x125x6x9x8">n25</section>
+        <section size="h-298x149x5.5x8x13">n29</section>
+        <section size="h-300x150x6.5x9x13">n30</section>
+        <section size="h-346x174x6x9x13">n34</section>
+        <section size="h-350x175x7x11x13">n35</section>
+        <section size="h-396x199x7x11x13">n39</section>
+        <section size="h-400x200x8x13x13">n40</section>
+        <section size="h-446x199x8x12x13">n44</section>
+        <section size="h-450x200x9x14x13">n45</section>
+        <section size="h-496x199x9x14x13">n49</section>
+        <section size="h-500x200x10x16x13">n50</section>
+        <section size="h-596x199x10x15x13">n59</section>
+        <section size="h-600x200x11x17x13">n60</section>
+        <section size="h-606x201x12x20x13">n606</section>
+        <!--中幅シリーズなのでprifixにmつけました-->
+        <section size="h-446x302x13x21x13">m446</section>
+        <section size="h-482x300x11x15x13">m482</section>
+        <section size="h-488x300x11x18x13">m488</section>
+        <section size="h-582x300x12x17x13">m582</section>
+        <section size="h-588x300x12x20x13">m588</section>
+        <section size="h-692x300x13x20x18">m692</section>
+        <section size="h-700x300x13x24x18">m700</section>
+        <section size="h-792x300x14x22x18">m792</section>
+        <section size="h-800x300x14x26x18">m800</section>
+        <section size="h-890x299x15x23x18">m890</section>
+        <section size="h-918x303x18x34x18">m918</section>
+        <section size="h-912x302x18x34x18">m912</section>
+        <section size="h-900x300x16x28x18">m900</section>
+        <section size="h-800x400x19x40x18">sh80040</section>
+        <section size="h-800x400x19x36x18">sh80036</section>
+        <section size="h-800x400x19x25x18">sh80025</section>
+        <section size="h-800x400x19x28x18">sh80028</section>
+        <section size="h-800x400x19x32x18">sh80032</section>
+        <section size="h-900x400x16x32x18">sh90032</section>
+        <section size="h-900x350x19x36x18">sh90036</section>
+        <section size="h-900x350x19x40x18">sh90040</section>
+        <!--広幅シリーズなのでprifixにwつけました-->
+        <section size="h-300x300x10x15x13">w300</section>
+        <!--特寸H形鋼-->
+        <section size="h-441x199x6x9.5x13">th441</section>
+        <section size="h-684x300x11x16x18">th684</section>
+        <section size="h-577x299x9x14.5x13">th577</section>
+        <section size="h-788x299x12.5x20x18">th788</section>
+        <section size="h-888x300x13.5x22x18">th888</section>
+
+        <section size="h-792x380x19x22">bh7938</section>
+        <section size="h-792x350x16x22">bh7935</section>
+        <section size="h-1200x400x16x25">bh1200</section>
+    </sections>
+
+    <!--材料の設定情報だが、あってないようなもん2023年7月21日-->
+    <materials>
+        <!--材料だけど2通りしかないのでとりあえず以下のみでOKかな-->
+        <material>ss400forsustained</material>
+        <material>sm490forsustained</material>
+    </materials>
+
+    <!--スラブの設定情報。具体的にはコンクリートとスタッドの情報を設定します-->
+    <slabs>
+        <!--phi:スタッドのサイズ。19か22しか実装しない予定2023年7月21日-->
+        <!--l(mm):スタッドの長さ-->
+        <!--g(本)：スタッドの梁材軸直交方向の本数。ゲージみたいなの-->
+        <!--p(mm): スタッドの梁材軸方向のピッチ-->
+        <!--conc: コンクリートだが、fc21しか実装しない予定2023年7月21日-->
+        <!--t(mm): スラブ厚-->
+        <!-- 駐車場   -->
+        <slab phi="22" l="80" g="1" p="200" conc="fc21" t="105">g1t130b200p200</slab>
+        <slab phi="22" l="80" g="2" p="200" conc="fc21" t="105">g2t130b300p200</slab>
+        <!-- 物流倉庫 -->
+        <slab phi="19" l="120" g="1" p="200" conc="fc21" t="180">g1t180p200</slab>
+        <slab phi="19" l="120" g="2" p="200" conc="fc21" t="180">g2t180p200</slab>
+        <slab phi="22" l="120" g="2" p="200" conc="fc21" t="180">g2t180p200phi22</slab>
+        <slab phi="19" l="120" g="2" p="150" conc="fc21" t="180">g2t180p150</slab>
+        <slab phi="19" l="120" g="3" p="200" conc="fc21" t="180">g3t180p200</slab>
+        <!-- 物流倉庫2023年7月24日 -->
+        <slab phi="22" l="120" g="1" p="200" conc="fc21" t="200">g1t200b200p200</slab>
+        <slab phi="22" l="120" g="2" p="200" conc="fc21" t="200">g2t200b200p200</slab>
+    </slabs>
+
+    <!--h(mm):デッキプレート高さ Hd-->
+    <!--b(mm): デッキプレートピッチ B=-->
+    <!--bup: みぞの上幅 b1=-->
+    <!--bdown: みぞの下幅 b2-->
+    <!--t(mm)：板厚-->
+    <deckplates>
+        <!--エスデッキ https://www.itec-c.co.jp/download/scatalog.pdf -->
+        <deckplate h="50" b="300" bup="130" bdown="175" t="1.2">h50t12</deckplate>
+        <deckplate h="75" b="300" bup="125" bdown="180" t="1.2">h75t12</deckplate>
+        <!--フラットデッキ-->
+        <deckplate h="0" b="0" bup="0" bdown="0" t="0">flatdeck</deckplate>
+    </deckplates>
+
+    <gussets>
+        <gusset m="10" n="2" p="60" t="16" bolt="f10tm22">bj90m</gusset>
+        <gusset m="8" n="2" p="60" t="16" bolt="f10tm22">bj684m</gusset>
+        <gusset m="8" n="1" p="60" t="16" bolt="f10tm22">bj684</gusset>
+        <gusset m="7" n="1" p="60" t="12" bolt="f10tm22">bj582</gusset>
+        <gusset m="4" n="1" p="60" t="6" bolt="f10tm20">bj34</gusset>
+        <gusset m="10" n="2" p="60" t="16" bolt="f10tm22">j89m</gusset>
+        <gusset m="9" n="1" p="60" t="16" bolt="f10tm22">j79</gusset>
+        <gusset m="8" n="1" p="60" t="12" bolt="f10tm20">j684</gusset>
+    </gussets>
+
+    <bolts>
+        <!--材料だけど2通りしかないのでとりあえず以下のみでOKかな-->
+        <bolt type="f8t" d="16">f8tm16</bolt>
+        <bolt type="f8t" d="20">f8tm20</bolt>
+        <bolt type="f8t" d="22">f8tm22</bolt>
+        <bolt type="f8t" d="24">f8tm24</bolt>
+        <bolt type="f10t" d="16">f10tm16</bolt>
+        <bolt type="f10t" d="20">f10tm20</bolt>
+        <bolt type="f10t" d="22">f10tm22</bolt>
+        <bolt type="f10t" d="24">f10tm24</bolt>
+        <bolt type="shtb" d="16">shtbm16</bolt>
+        <bolt type="shtb" d="20">shtbm20</bolt>
+        <bolt type="shtb" d="22">shtbm22</bolt>
+        <bolt type="shtb" d="24">shtbm24</bolt>
+        <bolt type="12g" d="16">12gm16</bolt>
+        <bolt type="12g" d="20">12gm20</bolt>
+        <bolt type="12g" d="22">12gm22</bolt>
+        <bolt type="12g" d="24">12gm24</bolt>
+    </bolts>
+
+</root>
