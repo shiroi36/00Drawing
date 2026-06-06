@@ -1,0 +1,9 @@
+bc = 200mm
+tr = 9mm
+tw = 9mm
+twf = 9mm
+tk = 16mm
+br = 172mm
+Lh = 44mm
+Bh = 33mm
+bh = 19mm
